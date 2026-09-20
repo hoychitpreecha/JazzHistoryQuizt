@@ -3,646 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส</title>
+    <title id="page-title">แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส</title>
     <style>
-        body { font-family: 'Sarabun', sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h1, h2, h3 { text-align: center; color: #2c3e50; }
+        /* ตั้งค่าภาพพื้นหลังตามที่ระบุ */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-image: url('the Great Day in Harlem - Art Kane (1957).jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #222;
+        }
+        
+        /* ปรับพื้นหลังส่วนเนื้อหาให้โปร่งแสง 70% (rgba 0.7) พร้อมเบลอฉากหลังให้อ่านง่าย */
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(8px);
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3); 
+        }
+
+        h1, h2, h3 { text-align: center; color: #1a252f; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); }
+        
+        .lang-switch { text-align: right; margin-bottom: 20px; }
+        .lang-btn { background: #ecf0f1; border: 1px solid #bdc3c7; padding: 6px 16px; cursor: pointer; border-radius: 20px; font-size: 14px; margin-left: 5px; transition: 0.3s; }
+        .lang-btn.active { background: #2c3e50; color: white; border-color: #2c3e50; }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #3498db; color: #fff; border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 20px; }
-        button:hover { background: #2980b9; }
-        .question-block { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
-        .question-title { font-weight: bold; margin-bottom: 10px; }
-        .option-label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; background: #f9f9f9; border-radius: 4px; }
-        .option-label:hover { background: #e9ecef; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: rgba(255,255,255,0.9); }
+        
+        button.primary-btn { background: #e74c3c; color: #fff; border: none; padding: 14px 20px; font-size: 18px; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; transition: background 0.3s; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button.primary-btn:hover { background: #c0392b; }
+        
+        .question-block { margin-bottom: 25px; padding: 20px; background: rgba(255,255,255,0.6); border-radius: 8px; border-left: 5px solid #2980b9; }
+        .question-title { font-weight: bold; margin-bottom: 12px; font-size: 17px; line-height: 1.5; }
+        .option-label { display: block; margin-bottom: 8px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.8); border-radius: 6px; border: 1px solid #ddd; transition: 0.2s; }
+        .option-label:hover { background: #e9ecef; border-color: #bbb; }
+        input[type="radio"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
+        
         .hidden { display: none; }
-        .mistake-block { background: #ffebee; border-left: 4px solid #f44336; padding: 15px; margin-bottom: 15px; }
+        .mistake-block { background: rgba(255, 235, 238, 0.9); border-left: 5px solid #f44336; padding: 15px; margin-bottom: 15px; border-radius: 4px; line-height: 1.5; }
         .correct-ans { color: #2e7d32; font-weight: bold; margin-top: 10px; }
+        #student-info { background: rgba(255,255,255,0.8); padding: 15px; border-radius: 8px; display: inline-block; margin: 0 auto; }
+        .center-wrap { text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="lang-switch">
+        <button class="lang-btn active" id="btn-th" onclick="setLanguage('th')">ไทย</button>
+        <button class="lang-btn" id="btn-en" onclick="setLanguage('en')">English</button>
+    </div>
+
     <!-- หน้าแรก: กรอกข้อมูล -->
     <div id="login-page">
-        <h1>ลงทะเบียนสอบ</h1>
-        <p style="text-align:center;">แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส (50 ข้อ)</p>
+        <h1 id="ui-register-title">ลงทะเบียนสอบ</h1>
+        <p style="text-align:center; font-weight:bold;" id="ui-subtitle">แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส (50 ข้อ)</p>
         <div class="form-group">
-            <label>ชื่อ:</label>
-            <input type="text" id="fname" placeholder="กรอกชื่อ" required>
+            <label id="ui-fname-label">ชื่อ:</label>
+            <input type="text" id="fname" required>
         </div>
         <div class="form-group">
-            <label>นามสกุล:</label>
-            <input type="text" id="lname" placeholder="กรอกนามสกุล" required>
+            <label id="ui-lname-label">นามสกุล:</label>
+            <input type="text" id="lname" required>
         </div>
         <div class="form-group">
-            <label>รหัสนักศึกษา:</label>
-            <input type="text" id="studentid" placeholder="กรอกรหัสนักศึกษา" required>
+            <label id="ui-stdid-label">รหัสนักศึกษา:</label>
+            <input type="text" id="studentid" required>
         </div>
-        <button onclick="startQuiz()">เริ่มทำข้อสอบ</button>
+        <button class="primary-btn" id="ui-start-btn" onclick="startQuiz()">เริ่มทำข้อสอบ</button>
     </div>
 
     <!-- หน้าทำข้อสอบ -->
     <div id="quiz-page" class="hidden">
-        <h2>แบบทดสอบ</h2>
+        <h2 id="ui-quiz-title">แบบทดสอบ</h2>
         <div id="quiz-container"></div>
-        <button onclick="submitQuiz()">ส่งคำตอบ</button>
+        <button class="primary-btn" id="ui-submit-btn" onclick="submitQuiz()">ส่งคำตอบ</button>
     </div>
 
     <!-- หน้าแสดงผลลัพธ์ -->
     <div id="result-page" class="hidden">
-        <h1>ผลการทดสอบ</h1>
-        <h3 id="student-info"></h3>
-        <h2 id="final-score" style="color: #d35400; font-size: 32px;"></h2>
+        <h1 id="ui-result-title">ผลการทดสอบ</h1>
+        <div class="center-wrap"><h3 id="student-info"></h3></div>
+        <h2 id="final-score" style="color: #c0392b; font-size: 36px; text-align: center; margin: 20px 0;"></h2>
         
         <div id="mistakes-container">
-            <h3 style="text-align: left; margin-top: 30px;">ข้อที่ทำผิดและการเรียนรู้:</h3>
-            <!-- ข้อที่ผิดจะแสดงที่นี่ -->
+            <h3 style="text-align: left; margin-top: 30px; border-bottom: 2px solid #333; padding-bottom: 10px;" id="ui-mistakes-title">ข้อที่ทำผิดและการเรียนรู้:</h3>
+            <div id="mistakes-list"></div>
         </div>
     </div>
 </div>
 
 <script>
-    // ฐานข้อมูลข้อสอบ (สามารถคัดลอกข้อ 11-50 มาใส่ต่อในรูปแบบเดียวกันได้เลย)
-    const rawQuizData = [
-        // บทที่ 1
-        {
-            chapter: 1,
-            q: "Ragtime music originated primarily from combining musical elements of which two cultures? (Ragtime มีจุดกำเนิดจากการผสมผสานองค์ประกอบทางดนตรีของสองวัฒนธรรมใดเป็นหลัก?)",
-            options: [
-                "A: The use of Asian pentatonic scales mixed with European music theory. (การใช้บันไดเสียงเพนทาโทนิคของเอเชียผสมกับทฤษฎีดนตรียุโรป)",
-                "B: The use of African syncopation and call-and-respond with European music theory. (การใช้จังหวะขัด (Syncopation) และการถาม-ตอบ (Call and Respond) ของแอฟริกากับทฤษฎีดนตรียุโรป)",
-                "C: The singing of European church hymns mixed with Latin percussion rhythms. (การขับร้องบทสวดคริสตจักรของยุโรปผสมกับจังหวะเคาะแบบละติน)",
-                "D: Native American folk music mixed with English dance tunes. (ดนตรีโฟล์กของอเมริกันพื้นเมืองผสมกับบทเพลงเต้นรำของอังกฤษ)"
-            ],
-            ans: 1
+    const i18n = {
+        th: {
+            pageTitle: "แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส", registerTitle: "ลงทะเบียนสอบ", subtitle: "แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส (50 ข้อ)",
+            fnameLabel: "ชื่อ:", lnameLabel: "นามสกุล:", stdidLabel: "รหัสนักศึกษา:", startBtn: "เริ่มทำข้อสอบ",
+            quizTitle: "แบบทดสอบ", submitBtn: "ส่งคำตอบ", resultTitle: "ผลการทดสอบ", mistakesTitle: "ข้อที่ทำผิดและการเรียนรู้:",
+            scoreText: "คะแนนที่ได้", alertFill: "กรุณากรอกข้อมูลให้ครบถ้วนก่อนเริ่มทำข้อสอบ", confirmSubmit: "คุณแน่ใจหรือไม่ว่าต้องการส่งคำตอบ?",
+            perfectMsg: "🎉 ยอดเยี่ยมมาก! คุณทำข้อสอบถูกต้องทั้งหมด", yourAns: "คำตอบของคุณ", correctAns: "คำตอบที่ถูกต้อง", noAns: "ไม่ได้ตอบ"
         },
-        {
-            chapter: 1,
-            q: "How is Scott Joplin's Maple Leaf Rag (1899) significant to music history? (บทเพลง Maple Leaf Rag (1899) ของ Scott Joplin มีความสำคัญอย่างไรต่อประวัติศาสตร์ดนตรี?)",
-            options: [
-                "A: It was the first song to use a synthesizer for recording. (เป็นบทเพลงแรกที่นำเครื่องดนตรีสังเคราะห์มาใช้บันทึกเสียง)",
-                "B: It was the first song that made ragtime widely known nationwide and sold over 1 million copies of sheet music. (เป็นเพลงแรกที่ทำให้ดนตรีแร๊กไทม์เป็นที่รู้จักแพร่หลายทั่วประเทศและทำยอดขายโน้ตเพลงกว่า 1 ล้านชุด)",
-                "C: It was the song that directly transitioned ragtime into the bebop era. (เป็นเพลงที่เปลี่ยนผ่านดนตรีแร๊กไทม์เข้าสู่ดนตรียุคบีบ๊อพโดยตรง)",
-                "D: It was the first song ever recorded on a phonograph record in history. (เป็นเพลงที่มีการบันทึกเสียงลงแผ่นเสียงเป็นครั้งแรกในประวัติศาสตร์)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 1,
-            q: "Which US state is recognized as the \"Center of Ragtime\"? (รัฐใดในสหรัฐอเมริกาที่ได้รับการยอมรับว่าเป็น \"ศูนย์กลางของดนตรีแร๊กไทม์\"?)",
-            options: [
-                "A: New York",
-                "B: Louisiana",
-                "C: Missouri",
-                "D: Illinois"
-            ],
-            ans: 2
-        },
-        {
-            chapter: 1,
-            q: "In the early days, before being developed into piano compositions, which instrument was popular for playing ragtime music? (ในช่วงเริ่มต้นก่อนที่จะถูกพัฒนามาเป็นบทเพลงสำหรับเปียโน เครื่องดนตรีชนิดใดได้รับความนิยมในการบรรเลงดนตรีแร๊กไทม์?)",
-            options: [
-                "A: Banjo",
-                "B: Guitar",
-                "C: Violin",
-                "D: Double Bass"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 1,
-            q: "How is Jelly Roll Morton's 1938 version of \"Maple Leaf Rag\" significant to the evolution of jazz? (การบรรเลงเพลง \"Maple Leaf Rag\" ในเวอร์ชันปี ค.ศ. 1938 ของ Jelly Roll Morton มีความสำคัญต่อวิวัฒนาการดนตรีแจ๊ส อย่างไร?)",
-            options: [
-                "A: It eliminated syncopation and was played as a 3/4 waltz. (เป็นการตัดจังหวะขัดทิ้งไปและเล่นเป็นดนตรีวอลซ์ 3/4)",
-                "B: It changed straight 8th notes to a more bouncing upbeat feel, similar to a swing rhythm. (เป็นการเปลี่ยนการบรรเลงโน้ตเขบ็ตหนึ่งชั้นแบบตรง (Straight 8th) ให้มีความโยนในจังหวะยก คล้ายจังหวะสวิง)",
-                "C: It replaced all piano sounds with a large brass section. (เป็นการนำเครื่องเป่าทองเหลืองขนาดใหญ่มาเล่นแทนเสียงเปียโนทั้งหมด)",
-                "D: It was played in free tempo, paving the way for free jazz. (เป็นการบรรเลงแบบไม่มีจังหวะควบคุม (Free Tempo) เพื่อมุ่งสู่ฟรีแจ๊ส)"
-            ],
-            ans: 1
-        },
-        // บทที่ 2
-        {
-            chapter: 2,
-            q: "Traditional Blues usually has a structural form of how many bars? (โครงสร้างบทเพลงบลูส์มาตรฐานมีลักษณะรูปแบบห้อง?)",
-            options: [
-                "A: 16 bars",
-                "B: 12 bars",
-                "C: 8 bars",
-                "D: 32 bars"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 2,
-            q: "The term \"Blue Note,\" which is a sonic signature of blues music, refers to which flattened notes in a major scale? (คำว่า \"Blue Note\" ซึ่งเป็นเอกลักษณ์ทางเสียงของดนตรีบลูส์ หมายถึงโน้ตลำดับใดในบันไดเสียงเมเจอร์ที่มีการเพี้ยนต่ำลง?)",
-            options: [
-                "A: 1st, 3rd, and 5th notes (โน้ตตัวที่ 1, 3 และ 5)",
-                "B: 2nd, 4th, and 6th notes (โน้ตตัวที่ 2, 4 และ 6)",
-                "C: 3rd, 5th, and 7th notes (โน้ตตัวที่ 3, 5 และ 7)",
-                "D: 4th, 6th, and 7th notes (โน้ตตัวที่ 4, 6 และ 7)"
-            ],
-            ans: 2
-        },
-        {
-            chapter: 2,
-            q: "What is the most prominent characteristic of Classic Blues in the 1920s? (ลักษณะเด่นที่สุดของ Classic Blues ในช่วงทศวรรษที่ 1920 คือข้อใด?)",
-            options: [
-                "A: Solo singing without instrumental accompaniment in cotton fields. (เป็นการร้องเดี่ยวไร้เครื่องดนตรีประกอบในทุ่งปลูกฝ้าย)",
-                "B: Performed by an ensemble with clear musical arrangements and a female lead vocalist. (บรรเลงเป็นวงที่มีการเรียบเรียงดนตรีชัดเจน และมีนักร้องนำเป็นผู้หญิง)",
-                "C: Used only one acoustic guitar for the melody. (ใช้เฉพาะกีตาร์โปร่งไฟฟ้าตัวเดียวในการดำเนินทำนอง)",
-                "D: Sung by an all-male choir in a church. (ขับร้องโดยกลุ่มนักร้องประสานเสียงชายล้วนในโบสถ์)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 2,
-            q: "What was the significant technological turning point for Urban Blues, which emerged in Chicago after World War II? (แนวดนตรี Urban Blues ซึ่งเกิดขึ้นที่เมืองชิคาโกหลังสงครามโลกครั้งที่ 2 มีจุดเปลี่ยนสำคัญทางเทคโนโลยีข้อใด?)",
-            options: [
-                "A: Returning to ancient acoustic instruments. (การหันกลับไปใช้เครื่องดนตรีอะคูสติกโบราณ)",
-                "B: The use of electric instruments instead of acoustic ones, resulting in a heavier sound. (การใช้เครื่องดนตรีไฟฟ้าเข้ามาแทนที่เครื่องดนตรีอะคูสติก ทำให้เกิดสุ้มเสียงหนักแน่น)",
-                "C: The use of computers and digital synthesizers for music editing. (การนำคอมพิวเตอร์และเสียงสังเคราะห์แบบดิจิทัลมาตัดต่อเพลง)",
-                "D: The removal of the drum set, replaced by hand clapping. (การยกเลิกตำแหน่งกลองชุดแล้วแทนที่ด้วยการปรบมือ)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 2,
-            q: "How did the \"Call and Respond\" singing technique in blues directly influence the evolution of jazz? (เทคนิค \"Call and Respond\" ในการขับร้องเพลงบลูส์ ส่งอิทธิพลโดยตรงต่อวิวัฒนาการดนตรีแจ๊สในรูปแบบใด?)",
-            options: [
-                "A: Composing music based on Baroque counterpoint principles. (การประพันธ์บทเพลงตามหลัก Counterpoint ของดนตรีบาโรก)",
-                "B: Trading solos or interacting between instruments. (การโซโล่ประชันหรือผลัดกันโต้ตอบระหว่างเครื่องดนตรี (Trade Solo))",
-                "C: Playing a continuous walking bass line. (การเล่นแนวเบสเดินหน้าตลอดเวลาแบบ Walking Bass)",
-                "D: Allowing the time signature to change freely. (การกำหนดให้อัตราจังหวะของบทเพลงเปลี่ยนไปมาอย่างอิสระ)"
-            ],
-            ans: 1
-        },
-        // บทที่ 3
-        {
-            chapter: 3,
-            q: "How did the Jim Crow laws affect the musical evolution in New Orleans? (กฎหมายแบ่งแยกผิวสี (Jim Crow laws) ส่งผลต่อวิวัฒนาการทางดนตรีในเมืองนิวออร์ลีนส์อย่างไร?)",
-            options: [
-                "A: Banned black musicians from playing any instruments in public. (ทำให้นักดนตรีผิวดำถูกห้ามไม่ให้เล่นเครื่องดนตรีทุกชนิดในที่สาธารณะ)",
-                "B: Forced Creoles with Western music theory backgrounds to integrate with black people, leading to a fusion of music theory with blues and improvisation. (บังคับให้ชาวครีโอลที่มีพื้นฐานทฤษฎีดนตรีตะวันตกต้องย้ายมารวมกับคนผิวดำ ทำให้เกิดการหลอมรวมทฤษฎีดนตรีเข้ากับบลูส์และการด้นสด)",
-                "C: Led to the ban on playing music during funeral marches throughout New Orleans. (นำไปสู่การยกเลิกการบรรเลงเพลงในขบวนแห่ศพทั่วเมืองนิวออร์ลีนส์)",
-                "D: Forced all musicians to exclusively play European classical music. (ส่งผลให้นักดนตรีทุกคนต้องหันไปเล่นดนตรีคลาสสิกแบบยุโรปเพียงอย่างเดียว)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 3,
-            q: "Which instrument is NOT part of the front line in a traditional New Orleans jazz band? (เครื่องดนตรีใดไม่อยู่ในกลุ่มเครื่องเป่าส่วนหน้า (Front line) ในวงดนตรีนิวออร์ลีนส์แจ๊สดั้งเดิม?)",
-            options: [
-                "A: Clarinet",
-                "B: Trombone",
-                "C: Sousaphone",
-                "D: Cornet"
-            ],
-            ans: 2
-        },
-        {
-            chapter: 3,
-            q: "Which event do music historians identify as the official first jazz recording in 1917? (เหตุการณ์ใดที่นักประวัติศาสตร์ดนตรีระบุว่าเป็นการเริ่มต้นบันทึกเสียงดนตรีแจ๊สอย่างเป็นทางการครั้งแรกในปี ค.ศ. 1917?)",
-            options: [
-                "A: The recording of Scott Joplin's \"Maple Leaf Rag\". (การบันทึกเสียงเพลง \"Maple Leaf Rag\" ของ Scott Joplin)",
-                "B: The recording by the Original Dixieland Jass Band (ODJB). (การบันทึกเสียงของวง Original Dixieland Jass Band (ODJB))",
-                "C: The recording of Louis Armstrong's Hot Five's first album. (การบันทึกเสียงอัลบั้มชุดแรกของ Louis Armstrong's Hot Five)",
-                "D: The recording of Mamie Smith's \"Crazy Blues\". (การบันทึกเสียงเพลง \"Crazy Blues\" ของ Mamie Smith)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 3,
-            q: "What was Louis Armstrong's significant musical contribution when he formed Louis Armstrong's Hot Five in Chicago? (บทบาททางดนตรีที่สำคัญของ Louis Armstrong เมื่อครั้งตั้งวง Louis Armstrong’s Hot Five ณ เมืองชิคาโกคือข้อใด?)",
-            options: [
-                "A: Transitioning jazz from collective improvisation to emphasizing individual soloists. (การเปลี่ยนผ่านดนตรีแจ๊สจากการบรรเลงสอดประสานร่วมกัน (Collective Improvisation) ไปสู่การเน้นโชว์ศักยภาพการโซโล่เดี่ยว (Individual Soloist))",
-                "B: Replacing all acoustic instruments with electric ones. (การนำเครื่องดนตรีไฟฟ้าเข้ามาแทนที่เครื่องดนตรีอะคูสติกทั้งหมด)",
-                "C: Eliminating the drum set and double bass from the jazz band. (การยกเลิกบทบาทของกลองชุดและดับเบิลเบสออกจากวงแจ๊ส)",
-                "D: Pioneering the use of a large orchestra to play jazz music. (การริเริ่มนำวงออร์เคสตราขนาดใหญ่มาบรรเลงเพลงแจ๊ส)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 3,
-            q: "What is a unique characteristic of the New Orleans' Funeral March, which served as a prototype for jazz ensembles? (ลักษณะเฉพาะของขบวนแห่ศพในแบบนิวออร์ลีนส์ (New Orleans’ Funeral March) ซึ่งเป็นต้นแบบการรวมวงแจ๊สคือข้อใด?)",
-            options: [
-                "A: Playing joyful celebration music on the way there, and sad mourning music on the way back. (ขาไปบรรเลงเพลงสนุกสนานเฉลิมฉลอง ขากลับบรรเลงเพลงเศร้าไว้อาลัย)",
-                "B: Playing sad mourning music on the way there, and joyful celebration music on the way back. (ขาไปบรรเลงเพลงเศร้าเพื่อไว้อาลัย และขากลับบรรเลงเพลงสนุกสนานเพื่อเฉลิมฉลองชีวิต)",
-                "C: Marching without playing any musical instruments along the route. (มีการเดินสวนสนามโดยไม่มีการบรรเลงเครื่องดนตรีชนิดใดเลยตลอดเส้นทาง)",
-                "D: Using religious choir singing without a horn section following. (ใช้การขับร้องประสานเสียงทางศาสนาโดยไม่มีวงเครื่องเป่าเดินตาม)"
-            ],
-            ans: 1
-        },
-        // บทที่ 4
-        {
-            chapter: 4,
-            q: "What was the main reason small jazz bands had to expand into 12-13 member \"Big Bands\" during the swing era? (ปัจจัยสำคัญใดที่ทำให้วงดนตรีแจ๊สขนาดเล็กต้องขยายขนาดสู่ \"วงบิ๊กแบนด์\" (Big Band) ที่มีสมาชิก 12-13 คนในยุคสวิง?)",
-            options: [
-                "A: The desire to compete with European classical orchestras in terms of instrument count. (ความต้องการแข่งขันด้านจำนวนเครื่องดนตรีกับวงดนตรีคลาสสิกยุโรป)",
-                "B: The volume level of small bands was insufficient for large ballrooms. (ระดับความดังของวงขนาดเล็กไม่เพียงพอต่อสถานที่เต้นรำ (Ballroom) ที่มีขนาดกว้างใหญ่)",
-                "C: A musicians' union law required all bands to have more than 10 members. (สหภาพนักดนตรีกำหนดกฎหมายบังคับให้ทุกวงต้องมีสมาชิกเกิน 10 คนขึ้นไป)",
-                "D: Prohibition laws required more band members to attract customers. (กฎหมายห้ามจำหน่ายสุราทำให้ต้องรับสมาชิกวงเพิ่มเพื่อดึงดูดลูกค้า)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 4,
-            q: "Which signature arranging technique by Don Redman was prominent in the Fletcher Henderson Orchestra? (เทคนิคการเรียบเรียงเสียงประสานอันเป็นแบบอย่างของ Fletcher Henderson Orchestra จากการเรียบเรียงของ Don Redman คือข้อใด?)",
-            options: [
-                "A: Having all musicians improvise simultaneously throughout the song. (การให้นักดนตรีทุกคนด้นสดพร้อมกันตลอดทั้งบทเพลง)",
-                "B: Call-and-respond between the reeds and brass sections. (การโต้ตอบกัน (Call-and-respond) ระหว่างกลุ่มเครื่องลมไม้ (Reeds) และกลุ่มเครื่องทองเหลือง (Brass))",
-                "C: Alternating a lead singer with readings of political poetry. (การใช้นักร้องนำสลับกับการอ่านบทกวีทางการเมือง)",
-                "D: Using a symphony orchestra string section as the core instead of horns. (การใช้เครื่องสายแบบวงซิมโฟนีออร์เคสตราเป็นแกนหลักแทนเครื่องเป่า)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 4,
-            q: "What does the term \"Head Arrangement\" mean in the style of the Count Basie Orchestra? (เทคนิคการเรียบเรียงเสียงประสานที่เรียกว่า \"Head Arrangement\" ของวง Count Basie Orchestra มีความหมายว่าอย่างไร?)",
-            options: [
-                "A: The bandleader writing detailed sheet music for musicians to play exactly as written. (การที่หัวหน้าวงเขียนโน้ตเพลงทุกแนวอย่างละเอียดให้นักดนตรีเล่นตามตัวอักษร)",
-                "B: Playing riffs created through collective rehearsal and memorization without written music. (การเล่นแนวทำนองแบบริฟฟ์ (Riff) ที่เกิดขึ้นจากการซ้อมและจดจำร่วมกันโดยไม่มีการบันทึกโน้ต)",
-                "C: Composing songs by using head nods to keep rhythm instead of a drum set. (การแต่งเพลงโดยเน้นการใช้ศีรษะเคาะจังหวะแทนการใช้กลองชุด)",
-                "D: Applying ancient classical melodies to new rhythms using original chords. (การนำท่วงทำนองเพลงคลาสสิกโบราณมาใส่ทำนองใหม่โดยใช้คอร์ดเดิม)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 4,
-            q: "Which historical event earned Benny Goodman the title \"King of Swing\"? (เหตุการณ์ประวัติศาสตร์ที่ทำให้ Benny Goodman ได้รับการขนานนามว่าเป็น \"King of Swing\" คือเหตุการณ์ใด?)",
-            options: [
-                "A: Winning the Battle of the Bands competition at the Savoy Ballroom. (การชนะการแข่งขันประชันวงในงาน Battle of the Bands ที่ Savoy Ballroom)",
-                "B: Leading an integrated big band (black and white musicians) in a concert at Carnegie Hall in 1938. (การนำวงบิ๊กแบนด์ที่มีทั้งนักดนตรีผิวขาวและผิวดำเปิดการแสดงคอนเสิร์ตที่ Carnegie Hall ในปี ค.ศ. 1938)",
-                "C: Pioneering the scat singing technique for the first time in the world. (การริเริ่มใช้เทคนิค Scat Singing เป็นคนแรกของโลก)",
-                "D: Leading a military band during World War I. (การเป็นผู้นำทัพทหารไปร่วมรบในสงครามโลกครั้งที่ 1 พร้อมวงดุริยางค์)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 4,
-            q: "What was the Duke Ellington Orchestra's standout feature in composition and arrangement? (ความโดดเด่นในการประพันธ์และเรียบเรียงเสียงประสานของ Duke Ellington คือข้อใด?)",
-            options: [
-                "A: Writing simple melodies restricted to only 3 chords. (การเขียนทำนองเพลงง่ายๆ โดยจำกัดให้ใช้เพียง 3 คอร์ดเท่านั้น)",
-                "B: Utilizing the unique skills of individual band members to create novel chord voicings and colors. (การอาศัยจุดเด่นและทักษะเฉพาะตัวของนักดนตรีแต่ละคนในวง เพื่อสร้างสีสันและการผสมเสียงคอร์ดที่แปลกใหม่)",
-                "C: Strictly prohibiting solo improvisations by band members. (การห้ามไม่ให้นักดนตรีในวงเล่นการโซโล่เดี่ยวโดยเด็ดขาด)",
-                "D: Requiring all musicians to play the exact same type of instrument. (การกำหนดให้นักดนตรีทุกคนต้องใช้เครื่องดนตรีประเภทเดียวกันทั้งวง)"
-            ],
-            ans: 1
-        },
-        // บทที่ 5
-        {
-            chapter: 5,
-            q: "Which socio-economic factor played a major role in the decline of swing dance culture and big bands? (ปัจจัยทางเศรษฐกิจและสังคมข้อใดที่มีบทบาทสำคัญทำให้วัฒนธรรมการเต้นรำสวิงและวงบิ๊กแบนด์เสื่อมความนิยมลง?)",
-            options: [
-                "A: The enforcement of a very high Cabaret Tax, which led venues to ban dancing. (การบังคับใช้อัตราภาษี Cabaret Tax ที่สูงมาก จนสถานบันเทิงต้องสั่งห้ามเต้นรำ)",
-                "B: A permanent nationwide ban on record sales. (การห้ามจำหน่ายแผ่นเสียงทั่วประเทศอย่างถาวร)",
-                "C: The immediate emergence of rock 'n' roll after World War I. (การเกิดขึ้นของแนวดนตรีร็อคแอนด์โรลในทันทีหลังสงครามโลกครั้งที่ 1)",
-                "D: The shutdown of 52nd Street in New York City. (การปิดตัวลงของถนนหมายเลข 52 ในนครนิวยอร์ก)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 5,
-            q: "Due to the fast tempos in bebop, how did drummers like Kenny Clarke and Max Roach change their playing style? (ด้วยความเร็วของบทเพลงในยุคบีบ๊อพ มือกลองอย่าง Kenny Clarke และ Max Roach ได้ปรับเปลี่ยนรูปแบบการเล่นอย่างไร?)",
-            options: [
-                "A: Stopped playing percussion entirely and switched to hand clapping. (หยุดเล่นเครื่องเคาะจังหวะทุกชนิดและหันไปปรบมือแทน)",
-                "B: Shifted the main beat from the bass drum to the ride cymbal. (ย้ายการรักษาจังหวะหลักจากกระเดื่อง (Bass drum) มาไว้ที่ฉาบไรด์ (Ride cymbal))",
-                "C: Exclusively played the snare and tom drums in a marching rhythm. (เล่นเฉพาะกลองสแนร์และกลองทอมด้วยจังหวะมาร์ชเท่านั้น)",
-                "D: Switched to an electric drum machine instead of playing live. (เปลี่ยนมาใช้ดรัมแมชชีนไฟฟ้าแทนการตีสด)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 5,
-            q: "What does the \"Contrafact\" composition technique in the bebop era refer to? (เทคนิคการประพันธ์เพลงที่เรียกว่า \"Contrafact\" ในยุคบีบ๊อพหมายถึงสิ่งใด?)",
-            options: [
-                "A: Doubling the tempo of classical music pieces. (การนำบทเพลงคลาสสิกมาเร่งความเร็วเป็นสองเท่า)",
-                "B: Composing a new melody over the existing chord structure and harmony of an older song. (การแต่งทำนองใหม่ซ้อนทับลงบนโครงสร้างคอร์ดและฮาร์โมนีของเพลงเดิมที่มีอยู่แล้ว)",
-                "C: Performing without any defined chord structure or melody. (การบรรเลงโดยไม่มีการกำหนดโครงสร้างคอร์ดและทำนองใดๆ เลย)",
-                "D: Singing foreign language poetry over a drum beat. (การร้องบทกลอนภาษาต่างประเทศทับลงบนจังหวะกลองชุด)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 5,
-            q: "How does the melody of bebop differ from swing era music? (ลักษณะท่วงทำนอง (Melody) ของดนตรีบีบ๊อพมีความแตกต่างจากเพลงในยุคสวิงอย่างไร?)",
-            options: [
-                "A: Melodies were simple, slow, and flat horizontally. (ทำนองเรียบง่าย ช้า และราบยาวเป็นแนวนอน)",
-                "B: Melodies were angular, referencing specific chord notes, often using chromatic passing notes and asymmetrical phrasing. (ทำนองมีความเป็นมุมแหลม (Angular) อ้างอิงตามโน้ตในคอร์ด นิยมใช้โน้ตผ่านโครมาติก และประโยคเพลงไม่สมมาตร)",
-                "C: The melody consisted of a short, two-note loop repeated throughout the song. (เป็นทำนองวนซ้ำสั้นๆ เพียง 2 ตัวโน้ตตลอดทั้งเพลง)",
-                "D: There was no main melody, focusing instead on shouting lyrics to vent emotions. (ไม่มีแนวทำนองหลัก แต่เน้นการตะโกนเนื้อร้องเพื่อระบายอารมณ์)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 5,
-            q: "What crucial foundation did Bud Powell establish for bebop piano playing? (Bud Powell ได้วางรากฐานสำคัญอันเป็นเอกลักษณ์ให้กับการเล่นเปียโนแจ๊สในยุคบีบ๊อพอย่างไร?)",
-            options: [
-                "A: Playing piano one-handed without touching the lower keys. (การเล่นเปียโนมือเดียวโดยไม่แตะต้องคีย์ฝั่งเสียงต่ำ)",
-                "B: Fast right-hand playing similar to a horn, while the left hand played supporting rhythmic chords (comping). (การเล่นมือขวาที่รวดเร็วคล้ายเครื่องเป่า และมือซ้ายเล่นคอร์ดด้วยจังหวะที่คอยรองรับ (Comping))",
-                "C: Holding down a chord throughout the entire song without moving fingers. (การกดคอร์ดค้างไว้ตลอดทั้งเพลงโดยไม่มีการขยับนิ้ว)",
-                "D: Pounding the keyboard with fists to create dissonant sounds. (การใช้กำปั้นทุบแป้นคีย์บอร์ดเพื่อให้เกิดเสียงกระด้าง)"
-            ],
-            ans: 1
-        },
-        // บทที่ 6
-        {
-            chapter: 6,
-            q: "In Miles Davis's album \"The Birth of the Cool,\" which instruments were added to create a softer tone and new colors? (ในอัลบั้ม \"The Birth of the Cool\" ของ Miles Davis มีการนำเครื่องดนตรีชนิดใดเข้ามาเพิ่มเพื่อสร้างความนุ่มนวลและสีสันใหม่?)",
-            options: [
-                "A: Electric guitar and synthesizer. (กีตาร์ไฟฟ้าและซินธิไซเซอร์)",
-                "B: French horn and Tuba. (เฟรนช์ฮอร์น (French horn) และทูบา (Tuba))",
-                "C: Harp and a full violin string section. (ฮาร์ปและเครื่องสายไวโอลินแบบเต็มวง)",
-                "D: Banjo and accordion. (แบนโจและหีบเพลงชัก)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 6,
-            q: "What was the unique \"Chordless Quartet\" format of the Gerry Mulligan Quartet in Volume 1? (วง Gerry Mulligan Quartet ในอัลบั้ม Volume 1 มีรูปแบบวงพิเศษอย่างไรที่เรียกว่า \"Chordless Quartet\"?)",
-            options: [
-                "A: A band with no horns, consisting purely of percussion instruments. (เป็นวงที่ไม่มีเครื่องเป่า มีเพียงเครื่องประกอบจังหวะล้วน ๆ)",
-                "B: A band without a piano or chording instrument, relying instead on interwoven counterpoint. (เป็นวงที่ไม่มีเปียโนหรือเครื่องดำเนินคอร์ดใดๆ โดยอาศัยการบรรเลงสอดประสานกันแบบเคาน์เตอร์พอยต์ (Counterpoint))",
-                "C: A band playing 4 horns simultaneously without bass or drums. (เป็นวงที่บรรเลงเครื่องเป่า 4 ชิ้นพร้อมกันโดยไม่มีมือเบสและมือกลอง)",
-                "D: A band using entirely synthesized sound systems instead of real instruments. (เป็นวงที่ใช้ระบบเสียงสังเคราะห์แทนเครื่องดนตรีจริงทั้งหมด)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 6,
-            q: "What is the rhythmic distinction of the Dave Brubeck Quartet's \"Time Out\" album? (ความโดดเด่นด้านทฤษฎีจังหวะในอัลบั้ม \"Time Out\" ของ Dave Brubeck Quartet คือข้อใด?)",
-            options: [
-                "A: Playing all songs at a constant 4/4 time signature. (การเล่นเพลงทั้งหมดด้วยอัตราจังหวะ 4/4 ที่มีความเร็วคงที่)",
-                "B: Using time signatures other than 4/4, such as 5/4 in \"Take Five\" and 9/8 in \"Blue Rondo à la Turk\". (การใช้อัตราส่วนจังหวะที่ไม่ใช่ 4/4 เช่น เพลง \"Take Five\" ในจังหวะ 5/4 และ \"Blue Rondo à la Turk\" ในจังหวะ 9/8)",
-                "C: Playing songs without a set time signature throughout the album. (การเล่นเพลงโดยไม่กำหนดอัตราจังหวะตลอดทั้งอัลบั้ม)",
-                "D: Restricting the time signature strictly to a 3/4 waltz for all tracks. (การจำกัดอัตราจังหวะให้เป็นจังหวะวอลซ์ 3/4 เท่านั้นในทุกบทเพลง)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 6,
-            q: "Which album collaboration between Miles Davis and Gil Evans blended Spanish folk music with jazz improvisation? (ผลงานการร่วมมือระหว่าง Miles Davis และ Gil Evans อัลบั้มใดที่นำกลิ่นอายดนตรีพื้นบ้านของประเทศสเปนมาผสมผสานกับการอิมโพรไวส์แจ๊ส?)",
-            options: [
-                "A: Miles Ahead",
-                "B: Porgy and Bess",
-                "C: Sketches of Spain",
-                "D: Quiet Nights"
-            ],
-            ans: 2
-        },
-        {
-            chapter: 6,
-            q: "What is the main characteristic of the \"Third Stream\" music coined by Gunther Schuller? (ดนตรีแนว \"Third Stream\" ที่นิยามโดย Gunther Schuller มีลักษณะสำคัญทางดนตรีอย่างไร?)",
-            options: [
-                "A: Blending pop music with American country music. (การผสมผสานดนตรีป๊อปเข้ากับดนตรีคันทรี่ของอเมริกัน)",
-                "B: Combining classical music theory and structure (first stream) with jazz (second stream). (การนำเอาทฤษฎีและโครงสร้างของดนตรีคลาสสิก (กระแสที่ 1) มารวมเข้ากับดนตรีแจ๊ส (กระแสที่ 2))",
-                "C: A mix of ragtime, blues, and rock music. (การผสมระหว่างดนตรีแร๊กไทม์ ดนตรีบลูส์ และดนตรีร็อคเข้าด้วยกัน)",
-                "D: Having three electric instruments compete in a solo battle. (การนำเครื่องดนตรีไฟฟ้า 3 ชิ้นมาบรรเลงประชันกัน)"
-            ],
-            ans: 1
-        },
-        // บทที่ 7
-        {
-            chapter: 7,
-            q: "What was the primary concept behind the creation of Hard Bop? (แนวคิดหลักในการก่อกำเนิดแนวดนตรีฮาร์ดบ๊อบ (Hard Bop) เกิดขึ้นจากสิ่งใด?)",
-            options: [
-                "A: The desire to play softer and colder music than cool jazz. (ความต้องการเล่นดนตรีให้มีความนุ่มนวลและเย็นชามากกว่าคูลแจ๊ส)",
-                "B: Reclaiming black musical identity and spirit by mixing bebop structures with blues and gospel. (การทวงคืนอัตลักษณ์และจิตวิญญาณดนตรีของคนผิวดำ โดยนำโครงสร้างบีบ๊อพมาผสมกับบลูส์และกอสเปล (Gospel))",
-                "C: Abandoning swing rhythms to fully adopt rock rhythms. (การละทิ้งระบบจังหวะสวิงแล้วหันไปเล่นจังหวะร็อคอย่างสมบูรณ์)",
-                "D: Imitating the music theory of the European Romantic period. (การเลียนแบบทฤษฎีดนตรีคลาสสิกยุคโรแมนติกของชาวยุโรป)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 7,
-            q: "Which historical and social factor was deeply connected to the growth of Hard Bop? (ปัจจัยทางประวัติศาสตร์และสังคมข้อใดที่มีความเชื่อมโยงกับการเติบโตของดนตรีฮาร์ดบ๊อบอย่างลึกซึ้ง?)",
-            options: [
-                "A: The Civil Rights Movement for black people. (ขบวนการประท้วงเรียกร้องสิทธิพลเมือง (Civil Rights Movement) ของกลุ่มคนผิวดำ)",
-                "B: The Great Depression in the 1930s. (วิกฤตการณ์เศรษฐกิจตกต่ำครั้งใหญ่ (The Great Depression) ในทศวรรษ 1930)",
-                "C: The Gold Rush on the West Coast of the United States. (ยุคตื่นทองในแถบชายฝั่งตะวันตกของสหรัฐอเมริกา)",
-                "D: Western colonization in Africa. (ยุคการล่าอาณานิคมของชาติตะวันตกในทวีปแอฟริกา)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 7,
-            q: "How is Art Blakey and The Jazz Messengers praised in the jazz industry? (วง Art Blakey and The Jazz Messengers ได้รับการยกย่องในวงการแจ๊สอย่างไร?)",
-            options: [
-                "A: The first band to use an electric bass in a recording studio. (เป็นวงดนตรีวงแรกที่นำเบสไฟฟ้ามาใช้ในห้องอัด)",
-                "B: It acted as an institution or school that continuously nurtured and produced top-tier jazz musicians. (เปรียบเสมือนสถาบันหรือโรงเรียนที่คอยบ่มเพาะและผลิตนักดนตรีแจ๊สชั้นยอดเข้าสู่วงการอย่างต่อเนื่อง)",
-                "C: A band that never changed its members for 40 years. (เป็นวงดนตรีที่ไม่เคยเปลี่ยนสมาชิกเลยตลอดระยะเวลา 40 ปี)",
-                "D: A jazz band famous exclusively for dance choreography. (เป็นวงดนตรีแจ๊สที่มีชื่อเสียงโด่งดังเฉพาะการเต้นประกอบเพลงเท่านั้น)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 7,
-            q: "What instrument did Jimmy Smith play in his trio? (Jimmy Smith เล่นเครื่องดนตรีอะไรในวงทรีโอของเขา?)",
-            options: [
-                "A: Hammond B-3 Organ",
-                "B: Electric Piano",
-                "C: Synthesizer",
-                "D: Acoustic Piano"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 7,
-            q: "Compared to Bebop, how did Hard Bop differ? (เมื่อเปรียบเทียบกับดนตรีบีบ๊อพแล้ว ดนตรีฮาร์ดบ๊อบมีลักษณะที่แตกต่างออกไปอย่างไร?)",
-            options: [
-                "A: Played at much faster, almost incomprehensible tempos. (บรรเลงด้วยจังหวะที่เร็วขึ้นมากจนฟังไม่ออก)",
-                "B: Often played at slightly slower tempos, simplified harmonies, and emphasized the groove. (มักบรรเลงด้วยจังหวะที่ช้าลง ลดทอนความซับซ้อนของฮาร์โมนีลง และเน้นความสำคัญที่กรู๊ฟ (Groove))",
-                "C: Prohibited the use of blue notes in songs. (ห้ามใช้องค์ประกอบของบลูส์โน้ตในเพลง)",
-                "D: Played exclusively with classical instruments without brass. (บรรเลงเฉพาะเครื่องดนตรีคลาสสิกโดยไม่มีเครื่องเป่าทองเหลือง)"
-            ],
-            ans: 1
-        },
-        // บทที่ 8
-        {
-            chapter: 8,
-            q: "George Russell's book \"The Lydian Chromatic Concept of Tonal Organization\" led to the development of which music style? (ทฤษฎีจากหนังสือ \"The Lydian Chromatic Concept of Tonal Organization\" ของ George Russell นำไปสู่การพัฒนาดนตรีสไตล์ใด?)",
-            options: [
-                "A: Fusion",
-                "B: Modal Jazz",
-                "C: Free Jazz",
-                "D: Post-bop"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 8,
-            q: "What is the theoretical foundation of John Coltrane's \"Coltrane Changes\" in the song \"Giant Steps\"? (ทฤษฎี \"Coltrane Changes\" ของ John Coltrane ในเพลง \"Giant Steps\" มีพื้นฐานแนวคิดทางทฤษฎีดนตรีอย่างไร?)",
-            options: [
-                "A: Dividing an octave equally into three keys. (การแบ่งเสียงในช่วงหนึ่งออกเตฟให้ออกมาเท่าๆ กันเป็น 3 คีย์)",
-                "B: Repeating a single chord loop for 32 bars. (การใช้คอร์ดเดียวบรรเลงวนซ้ำตลอดทั้งเพลง 32 ห้อง)",
-                "C: Abandoning all chords and improvising purely on emotion. (การละทิ้งคอร์ดทั้งหมดและด้นสดตามอารมณ์ผู้เล่น)",
-                "D: Converting all major chords into diminished chords. (การแปลงคอร์ดเมเจอร์ทั้งหมดให้กลายเป็นคอร์ดดิมินิชต์)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 8,
-            q: "What Free Jazz experiment is demonstrated in Ornette Coleman's song \"Lonely Woman\"? (ในบทเพลง \"Lonely Woman\" ของ Ornette Coleman มีการทดลองทางดนตรีที่สะท้อนถึงอิสรภาพของฟรีแจ๊สอย่างไร?)",
-            options: [
-                "A: All musicians stopping simultaneously to shout together. (นักดนตรีทุกคนหยุดเล่นแล้วร้องตะโกนพร้อมกัน)",
-                "B: The bass and drums playing a fast swing tempo, while the horns independently play a slower melody on top. (กลองและเบสเล่นบนจังหวะ Fast Swing แต่เครื่องเป่าบรรเลงทำนองบนจังหวะที่ช้ากว่าอย่างอิสระ)",
-                "C: Swapping instrumentalists in the middle of the recording. (การสลับผู้เล่นเครื่องดนตรีในระหว่างทำการบันทึกเสียง)",
-                "D: Performing with instruments intentionally out of tune with each other. (การบรรเลงโดยไม่มีการตั้งสายเครื่องดนตรีให้ตรงกัน)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 8,
-            q: "What is Cecil Taylor's unique piano concept and playing style in the Free Jazz era? (นักเปียโน Cecil Taylor มีแนวคิดและสไตล์การบรรเลงเปียโนที่เป็นเอกลักษณ์ในยุคฟรีแจ๊สอย่างไร?)",
-            options: [
-                "A: Playing softly to imitate an ancient harp. (พรมนิ้วอย่างนุ่มนวลเลียนแบบเสียงพิณโบราณ)",
-                "B: Treating the piano as a percussive instrument, playing atonal music, and using complex cluster notes. (ปฏิบัติต่อเปียโนเสมือนเป็นเครื่องกระทบ (Percussive) เล่นดนตรีแบบไร้คีย์ (Atonal) และใช้กลุ่มคอร์ดแบบคลัสเตอร์ (Cluster notes))",
-                "C: Strictly playing triads according to Renaissance traditions. (เล่นเฉพาะแนวคอร์ดคู่สามอย่างเคร่งครัดตามแบบฉบับเรเนซองส์)",
-                "D: Only tapping the legs of the piano for rhythm without pressing keys. (ใช้การเคาะเฉพาะขาเปียโนเป็นจังหวะโดยไม่กดคีย์เปียโน)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 8,
-            q: "Which famous saxophonist released the album \"A Love Supreme\" in 1965? (นักแซกโซโฟนชื่อดังคนใดที่เป็นเจ้าของผลงานอัลบั้ม \"A Love Supreme\" ในปี ค.ศ. 1965?)",
-            options: [
-                "A: Charlie Parker",
-                "B: Ornette Coleman",
-                "C: John Coltrane",
-                "D: Albert Ayler"
-            ],
-            ans: 2
-        },
-        // บทที่ 9
-        {
-            chapter: 9,
-            q: "The \"Post-Bop\" style developed by Miles Davis's Second Great Quintet merged which concepts? (แนวดนตรี \"Post-Bop\" ของวง Miles Davis’s The Second Great Quintet เกิดจากการหลอมรวมแนวคิดแบบใดเข้าหากัน?)",
-            options: [
-                "A: The freedom of free jazz combined with the clear song forms of hard bop and much deeper harmonies. (อิสระจากแนวฟรีแจ๊ส ผสานกับความชัดเจนของฟอร์มเพลงจากฮาร์ดบ็อป และฮาร์โมนีที่ซับซ้อนลึกซึ้ง)",
-                "B: Military march rhythms mixed with disco dance music. (จังหวะมาร์ชทหารผสมผสานกับเพลงเต้นรำดิสโก้)",
-                "C: Traditional ragtime mixed with country music. (ดนตรีแร๊กไทม์ดั้งเดิมผสมกับดนตรีลูกทุ่งคันทรี)",
-                "D: Out-of-time playing mixed with gospel choir singing. (การบรรเลงแบบไม่มีจังหวะผสมกับการขับร้องหมู่แบบกอสเปล)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 9,
-            q: "Which legendary 1970 album by Miles Davis served as a milestone and prototype for the crystallization of jazz-rock fusion? (อัลบั้มระดับตำนานของ Miles Davis ในปี ค.ศ. 1970 ที่ถือเป็นหมุดหมายและต้นแบบสำคัญของการตกผลึกแนวดนตรีแจ๊สร็อคฟิวชั่น (Fusion) คืออัลบั้มใด?)",
-            options: [
-                "A: Kind of Blue",
-                "B: The Birth of the Cool",
-                "C: Bitches Brew",
-                "D: Miles Ahead"
-            ],
-            ans: 2
-        },
-        {
-            chapter: 9,
-            q: "What was the standout feature of The Headhunters led by Herbie Hancock? (จุดเด่นในการนำเสนอเพลงของวง The Headhunters ภายใต้การนำของ Herbie Hancock คือข้อใด?)",
-            options: [
-                "A: Blending funk grooves with electric pianos, synthesizers, and gradually layering instruments before playing the main melody. (การนำจังหวะฟังก์ (Funk) มาผสมผสานกับเปียโนไฟฟ้า ซินธิไซเซอร์ และการค่อยๆ เติมเครื่องดนตรีทีละชิ้นก่อนเข้าทำนอง)",
-                "B: Horn sections playing fast traditional bebop swing tempos. (การบรรเลงเครื่องเป่าด้วยจังหวะสวิงเร็วสูงแบบบีบ๊อพดั้งเดิม)",
-                "C: Using purely acoustic string orchestras as accompaniment. (การใช้วงเครื่องสายออร์เคสตราบรรเลงคลอแนวอะคูสติกล้วน)",
-                "D: Eliminating all electric instruments to emphasize natural sounds. (การตัดเครื่องดนตรีไฟฟ้าออกทั้งหมดเพื่อเน้นเสียงธรรมชาติ)"
-            ],
-            ans: 0
-        },
-        {
-            chapter: 9,
-            q: "Chick Corea's band Return to Forever was distinguished by blending which musical rhythms with electric jazz? (วงดนตรี Return to Forever ของ Chick Corea โดดเด่นด้วยการนำดนตรีแนวใดมาผสมผสานกับแจ๊สไฟฟ้า?)",
-            options: [
-                "A: Indian folk music (ดนตรีพื้นบ้านของชาวอินเดีย)",
-                "B: Latin rhythms (จังหวะลาติน (Latin))",
-                "C: Ancient European hymns (เพลงสวดโบราณของยุโรป)",
-                "D: American country music (ดนตรีคันทรี่ของอเมริกา)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 9,
-            q: "What was the musical signature of the Mahavishnu Orchestra founded by guitarist John McLaughlin? (เอกลักษณ์ทางดนตรีของวง Mahavishnu Orchestra ที่ก่อตั้งโดยมือกีตาร์ John McLaughlin คือข้อใด?)",
-            options: [
-                "A: An interesting blend of rock, blues, Indian rhythms, and diverse novel time signatures. (การผสมผสานดนตรีร็อค บลูส์ จังหวะจากดนตรีอินเดีย และการใช้อัตราจังหวะที่แปลกใหม่หลากหลาย)",
-                "B: Playing slow and soft lullaby rhythms. (การเล่นเพลงกล่อมนอนด้วยจังหวะช้าและนุ่มนวล)",
-                "C: Playing purely commercial pop cover songs. (การบรรเลงบทเพลงป๊อปคัฟเวอร์เพื่อการค้าล้วนๆ)",
-                "D: Restricting the band exclusively to brass instruments. (การจำกัดให้ใช้เพียงเครื่องดนตรีประเภทเป่าทองเหลืองเท่านั้น)"
-            ],
-            ans: 0
-        },
-        // บทที่ 10
-        {
-            chapter: 10,
-            q: "What significant phenomenon did George Benson's album \"Breezin'\" (1976) create in jazz history? (อัลบั้ม \"Breezin'\" (1976) ของ George Benson สร้างปรากฏการณ์สำคัญอย่างไรในประวัติศาสตร์ดนตรีแจ๊ส?)",
-            options: [
-                "A: The first free jazz album to win a top honor award. (เป็นอัลบั้มฟรีแจ๊สชุดแรกที่ได้รับรางวัลเกียรติยศสูงสุด)",
-                "B: A massive sales success that charted in the pop music category, marking an unprecedented crossover. (เป็นอัลบั้มที่ประสบความสำเร็จทางยอดขายมหาศาลและติดอันดับเพลงในสาขาเพลงป๊อป ถือเป็นการข้ามสายดนตรี (Crossover) ที่ไม่เคยเกิดขึ้นมาก่อน)",
-                "C: An album that rejected the use of any electronic equipment in the studio. (เป็นอัลบั้มที่ปฏิเสธการใช้อุปกรณ์ไฟฟ้าทุกชนิดในห้องอัดเสียง)",
-                "D: The album that brought the banjo back to peak popularity. (เป็นอัลบั้มที่ทำให้เครื่องดนตรีแบนโจกลับมาเป็นที่นิยมสูงสุดอีกครั้ง)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 10,
-            q: "What originated the term \"Smooth Jazz\" in the music industry? (นิยามของคำว่า \"Smooth Jazz\" มีจุดเริ่มต้นมาจากเหตุผลใดในแวดวงอุตสาหกรรมดนตรี?)",
-            options: [
-                "A: Coined by a group of academics at a music university. (เกิดจากการบัญญัติโดยกลุ่มนักวิชาการในมหาวิทยาลัยดนตรี)",
-                "B: From radio station surveys looking for easy-listening, non-distracting instrumental music to create ambient atmosphere. (เกิดจากการทำแบบสำรวจของสถานีวิทยุที่ต้องการเพลงบรรเลงฟังสบาย ไม่รบกวนสมาธิ สำหรับเปิดสร้างบรรยากาศ)",
-                "C: A protest by traditional bebop musicians. (เกิดจากการประท้วงของกลุ่มนักดนตรีบีบ๊อพดั้งเดิม)",
-                "D: The invention of a new digital recording system. (เกิดจากการคิดค้นระบบบันทึกเสียงดิจิทัลแบบใหม่)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 10,
-            q: "According to Albert Murray's book \"Stomping The Blues,\" which influenced the \"Young Lions,\" what elements must true jazz contain? (จากหนังสือ \"Stomping The Blues\" ของ Albert Murray ซึ่งส่งอิทธิพลต่อกลุ่ม \"Young Lions\" ระบุว่าดนตรีแจ๊สที่แท้จริงต้องมีองค์ประกอบใดบ้าง?)",
-            options: [
-                "A: Rock rhythms, synthesizers, and vocals. (จังหวะร็อค เครื่องสังเคราะห์เสียง และการร้องเพลง)",
-                "B: Swing rhythm, blue notes, and acoustic instruments. (จังหวะสวิง บลูส์โน้ต และเครื่องดนตรีอะคูสติก)",
-                "C: Odd meters, atonal systems, and electric guitars. (อัตราจังหวะแปลก ระบบไร้คีย์ และกีตาร์ไฟฟ้า)",
-                "D: Free improvisation, synthesizers, and short song structures. (การด้นสดอย่างเสรี เสียงสังเคราะห์ และโครงสร้างบทเพลงสั้น)"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 10,
-            q: "Which musician and leader of the \"Young Lions\" co-founded Jazz at Lincoln Center in 1987? (นักดนตรีของกลุ่ม \"Young Lions\" ผู้ร่วมก่อตั้งสถาบัน Jazz at Lincoln Center ในปี ค.ศ. 1987 คือใคร?)",
-            options: [
-                "A: Miles Davis",
-                "B: Wynton Marsalis",
-                "C: Dizzy Gillespie",
-                "D: Chet Baker"
-            ],
-            ans: 1
-        },
-        {
-            chapter: 10,
-            q: "What was the main musical concept of the \"M-Base Collective\" in Brooklyn? (กลุ่มนักดนตรี \"M-Base Collective\" ในย่านบรู๊คลิน มีแนวคิดทางดนตรีที่สำคัญอย่างไร?)",
-            options: [
-                "A: Applying Harmolodic theory blended with funk grooves, African polyrhythms, and odd meters. (นำทฤษฎี Harmolodic มาผสานกับกรู๊ฟแบบฟังก์ การใช้ Polyrhythm ของแอฟริกัน และอัตราจังหวะแบบ Odd Meters)",
-                "B: Focusing strictly on pop covers to reach radio charts. (เน้นการเล่นเพลงป๊อปคัฟเวอร์เพื่อให้ติดอันดับชาร์ตวิทยุ)",
-                "C: Rejecting live performance and exclusively writing music via computer. (ปฏิเสธการเล่นสดและเน้นการแต่งเพลงผ่านคอมพิวเตอร์เท่านั้น)",
-                "D: Strictly adhering to 1930s swing era big band formats. (ยึดมั่นเฉพาะรูปแบบการจัดวงบิ๊กแบนด์แบบยุคสวิง 1930)"
-            ],
-            ans: 0
+        en: {
+            pageTitle: "Jazz History Quiz", registerTitle: "Registration", subtitle: "Jazz History Final Exam (50 Questions)",
+            fnameLabel: "First Name:", lnameLabel: "Last Name:", stdidLabel: "Student ID:", startBtn: "Start Quiz",
+            quizTitle: "Quiz Questions", submitBtn: "Submit Answers", resultTitle: "Exam Results", mistakesTitle: "Mistakes & Corrections:",
+            scoreText: "Your Score", alertFill: "Please fill in all fields before starting the quiz.", confirmSubmit: "Are you sure you want to submit your answers?",
+            perfectMsg: "🎉 Excellent! You answered all questions correctly.", yourAns: "Your Answer", correctAns: "Correct Answer", noAns: "No Answer provided"
         }
-    ];
+    };
 
+    let currentLang = 'th';
     let shuffledQuiz = [];
     let studentData = {};
 
-    // ฟังก์ชันสุ่มชุดข้อสอบทีละ 5 ข้อ (Chunk Shuffling)
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.getElementById('btn-th').classList.remove('active');
+        document.getElementById('btn-en').classList.remove('active');
+        document.getElementById(`btn-${lang}`).classList.add('active');
+
+        const dict = i18n[lang];
+        document.title = dict.pageTitle;
+        document.getElementById('page-title').innerText = dict.pageTitle;
+        document.getElementById('ui-register-title').innerText = dict.registerTitle;
+        document.getElementById('ui-subtitle').innerText = dict.subtitle;
+        document.getElementById('ui-fname-label').innerText = dict.fnameLabel;
+        document.getElementById('ui-lname-label').innerText = dict.lnameLabel;
+        document.getElementById('ui-stdid-label').innerText = dict.stdidLabel;
+        document.getElementById('ui-start-btn').innerText = dict.startBtn;
+        document.getElementById('ui-quiz-title').innerText = dict.quizTitle;
+        document.getElementById('ui-submit-btn').innerText = dict.submitBtn;
+        document.getElementById('ui-result-title').innerText = dict.resultTitle;
+        document.getElementById('ui-mistakes-title').innerText = dict.mistakesTitle;
+
+        if (!document.getElementById('quiz-page').classList.contains('hidden')) renderQuiz(); 
+    }
+
+    // ฐานข้อมูลข้อสอบ 50 ข้อเต็ม
+    const rawQuizData = [
+        // บทที่ 1 (1-5)
+        { chapter:1, q_th:"Ragtime มีจุดกำเนิดจากการผสมผสานองค์ประกอบทางดนตรีของสองวัฒนธรรมใดเป็นหลัก?", q_en:"Ragtime music originated primarily from combining musical elements of which two cultures?", options_th:["ก: การใช้บันไดเสียงเพนทาโทนิคของเอเชียผสมกับทฤษฎีดนตรียุโรป", "ข: การใช้จังหวะขัด (Syncopation) และการถาม-ตอบ (Call and Respond) ของแอฟริกากับทฤษฎีดนตรียุโรป", "ค: การขับร้องบทสวดคริสตจักรของยุโรปผสมกับจังหวะเคาะแบบละติน", "ง: ดนตรีโฟล์กของอเมริกันพื้นเมืองผสมกับบทเพลงเต้นรำของอังกฤษ"], options_en:["A: The use of Asian pentatonic scales mixed with European music theory.", "B: The use of African syncopation and call-and-respond with European music theory.", "C: The singing of European church hymns mixed with Latin percussion rhythms.", "D: Native American folk music mixed with English dance tunes."], ans:1 },
+        { chapter:1, q_th:"บทเพลง Maple Leaf Rag (1899) ของ Scott Joplin มีความสำคัญอย่างไรต่อประวัติศาสตร์ดนตรี?", q_en:"How is Scott Joplin's Maple Leaf Rag (1899) significant to music history?", options_th:["ก: เป็นบทเพลงแรกที่นำเครื่องดนตรีสังเคราะห์มาใช้บันทึกเสียง", "ข: เป็นเพลงแรกที่ทำให้ดนตรีแร๊กไทม์เป็นที่รู้จักแพร่หลายทั่วประเทศและทำยอดขายโน้ตเพลงกว่า 1 ล้านชุด", "ค: เป็นเพลงที่เปลี่ยนผ่านดนตรีแร๊กไทม์เข้าสู่ดนตรียุคบีบ๊อพโดยตรง", "ง: เป็นเพลงที่มีการบันทึกเสียงลงแผ่นเสียงเป็นครั้งแรกในประวัติศาสตร์"], options_en:["A: It was the first song to use a synthesizer for recording.", "B: It was the first song that made ragtime widely known nationwide and sold over 1 million copies of sheet music.", "C: It was the song that directly transitioned ragtime into the bebop era.", "D: It was the first song ever recorded on a phonograph record in history."], ans:1 },
+        { chapter:1, q_th:"รัฐใดในสหรัฐอเมริกาที่ได้รับการยอมรับว่าเป็น 'ศูนย์กลางของดนตรีแร๊กไทม์'?", q_en:"Which US state is recognized as the 'Center of Ragtime'?", options_th:["ก: รัฐนิวยอร์ก (New York)", "ข: รัฐลุยเซียนา (Louisiana)", "ค: รัฐมิสซูรี (Missouri)", "ง: รัฐอิลลินอยส์ (Illinois)"], options_en:["A: New York", "B: Louisiana", "C: Missouri", "D: Illinois"], ans:2 },
+        { chapter:1, q_th:"ในช่วงเริ่มต้นก่อนที่จะถูกพัฒนามาเป็นบทเพลงสำหรับเปียโน เครื่องดนตรีชนิดใดได้รับความนิยมในการบรรเลงดนตรีแร๊กไทม์?", q_en:"In the early days, before being developed into piano compositions, which instrument was popular for playing ragtime music?", options_th:["ก: แบนโจ (Banjo)", "ข: กีตาร์ (Guitar)", "ค: ไวโอลิน (Violin)", "ง: ดับเบิลเบส (Double Bass)"], options_en:["A: Banjo", "B: Guitar", "C: Violin", "D: Double Bass"], ans:0 },
+        { chapter:1, q_th:"การบรรเลงเพลง 'Maple Leaf Rag' ในเวอร์ชันปี ค.ศ. 1938 ของ Jelly Roll Morton มีความสำคัญต่อวิวัฒนาการดนตรีแจ๊สอย่างไร?", q_en:"How is Jelly Roll Morton's 1938 version of 'Maple Leaf Rag' significant to the evolution of jazz?", options_th:["ก: เป็นการตัดจังหวะขัดทิ้งไปและเล่นเป็นดนตรีวอลซ์ 3/4", "ข: เป็นการเปลี่ยนการบรรเลงโน้ตเขบ็ตหนึ่งชั้นแบบตรง (Straight 8th) ให้มีความโยนในจังหวะยก คล้ายจังหวะสวิง", "ค: เป็นการนำเครื่องเป่าทองเหลืองขนาดใหญ่มาเล่นแทนเสียงเปียโนทั้งหมด", "ง: เป็นการบรรเลงแบบไม่มีจังหวะควบคุม (Free Tempo) เพื่อมุ่งสู่ฟรีแจ๊ส"], options_en:["A: It eliminated syncopation and was played as a 3/4 waltz.", "B: It changed straight 8th notes to a more bouncing upbeat feel, similar to a swing rhythm.", "C: It replaced all piano sounds with a large brass section.", "D: It was played in free tempo, paving the way for free jazz."], ans:1 },
+        // บทที่ 2 (6-10)
+        { chapter:2, q_th:"โครงสร้างบทเพลงบลูส์มาตรฐานมีลักษณะรูปแบบห้องกี่ห้อง?", q_en:"Traditional Blues usually has a structural form of how many bars?", options_th:["ก: 16 ห้อง (16 bars)", "ข: 12 ห้อง (12 bars)", "ค: 8 ห้อง (8 bars)", "ง: 32 ห้อง (32 bars)"], options_en:["A: 16 bars", "B: 12 bars", "C: 8 bars", "D: 32 bars"], ans:1 },
+        { chapter:2, q_th:"คำว่า 'Blue Note' ซึ่งเป็นเอกลักษณ์ทางเสียงของดนตรีบลูส์ หมายถึงโน้ตลำดับใดในบันไดเสียงเมเจอร์ที่มีการเพี้ยนต่ำลง?", q_en:"The term 'Blue Note,' which is a sonic signature of blues music, refers to which flattened notes in a major scale?", options_th:["ก: โน้ตตัวที่ 1, 3 และ 5", "ข: โน้ตตัวที่ 2, 4 และ 6", "ค: โน้ตตัวที่ 3, 5 และ 7", "ง: โน้ตตัวที่ 4, 6 และ 7"], options_en:["A: 1st, 3rd, and 5th notes", "B: 2nd, 4th, and 6th notes", "C: 3rd, 5th, and 7th notes", "D: 4th, 6th, and 7th notes"], ans:2 },
+        { chapter:2, q_th:"ลักษณะเด่นที่สุดของ Classic Blues ในช่วงทศวรรษที่ 1920 คือข้อใด?", q_en:"What is the most prominent characteristic of Classic Blues in the 1920s?", options_th:["ก: เป็นการร้องเดี่ยวไร้เครื่องดนตรีประกอบในทุ่งปลูกฝ้าย", "ข: บรรเลงเป็นวงที่มีการเรียบเรียงดนตรีชัดเจน และมีนักร้องนำเป็นผู้หญิง", "ค: ใช้เฉพาะกีตาร์โปร่งไฟฟ้าตัวเดียวในการดำเนินทำนอง", "ง: ขับร้องโดยกลุ่มนักร้องประสานเสียงชายล้วนในโบสถ์"], options_en:["A: Solo singing without instrumental accompaniment in cotton fields.", "B: Performed by an ensemble with clear musical arrangements and a female lead vocalist.", "C: Used only one acoustic guitar for the melody.", "D: Sung by an all-male choir in a church."], ans:1 },
+        { chapter:2, q_th:"แนวดนตรี Urban Blues ซึ่งเกิดขึ้นที่เมืองชิคาโกหลังสงครามโลกครั้งที่ 2 มีจุดเปลี่ยนสำคัญทางเทคโนโลยีข้อใด?", q_en:"What was the significant technological turning point for Urban Blues, which emerged in Chicago after World War II?", options_th:["ก: การหันกลับไปใช้เครื่องดนตรีอะคูสติกโบราณ", "ข: การใช้เครื่องดนตรีไฟฟ้าเข้ามาแทนที่เครื่องดนตรีอะคูสติก ทำให้เกิดสุ้มเสียงหนักแน่น", "ค: การนำคอมพิวเตอร์และเสียงสังเคราะห์แบบดิจิทัลมาตัดต่อเพลง", "ง: การยกเลิกตำแหน่งกลองชุดแล้วแทนที่ด้วยการปรบมือ"], options_en:["A: Returning to ancient acoustic instruments.", "B: The use of electric instruments instead of acoustic ones, resulting in a heavier sound.", "C: The use of computers and digital synthesizers for music editing.", "D: The removal of the drum set, replaced by hand clapping."], ans:1 },
+        { chapter:2, q_th:"เทคนิค 'Call and Respond' ในการขับร้องเพลงบลูส์ ส่งอิทธิพลโดยตรงต่อวิวัฒนาการดนตรีแจ๊สในรูปแบบใด?", q_en:"How did the 'Call and Respond' singing technique in blues directly influence the evolution of jazz?", options_th:["ก: การประพันธ์บทเพลงตามหลัก Counterpoint ของดนตรีบาโรก", "ข: การโซโล่ประชันหรือผลัดกันโต้ตอบระหว่างเครื่องดนตรี (Trade Solo)", "ค: การเล่นแนวเบสเดินหน้าตลอดเวลาแบบ Walking Bass", "ง: การกำหนดให้อัตราจังหวะของบทเพลงเปลี่ยนไปมาอย่างอิสระ"], options_en:["A: Composing music based on Baroque counterpoint principles.", "B: Trading solos or interacting between instruments.", "C: Playing a continuous walking bass line.", "D: Allowing the time signature to change freely."], ans:1 },
+        // บทที่ 3 (11-15)
+        { chapter:3, q_th:"กฎหมายแบ่งแยกผิวสี (Jim Crow laws) ส่งผลต่อวิวัฒนาการทางดนตรีในเมืองนิวออร์ลีนส์อย่างไร?", q_en:"How did the Jim Crow laws affect the musical evolution in New Orleans?", options_th:["ก: ทำให้นักดนตรีผิวดำถูกห้ามไม่ให้เล่นเครื่องดนตรีทุกชนิดในที่สาธารณะ", "ข: บังคับให้ชาวครีโอลที่มีพื้นฐานทฤษฎีดนตรีตะวันตกต้องย้ายมารวมกับคนผิวดำ ทำให้เกิดการหลอมรวมทฤษฎีดนตรีเข้ากับบลูส์และการด้นสด", "ค: นำไปสู่การยกเลิกการบรรเลงเพลงในขบวนแห่ศพทั่วเมืองนิวออร์ลีนส์", "ง: ส่งผลให้นักดนตรีทุกคนต้องหันไปเล่นดนตรีคลาสสิกแบบยุโรปเพียงอย่างเดียว"], options_en:["A: Banned black musicians from playing any instruments in public.", "B: Forced Creoles with Western music theory backgrounds to integrate with black people, leading to a fusion of music theory with blues and improvisation.", "C: Led to the ban on playing music during funeral marches throughout New Orleans.", "D: Forced all musicians to exclusively play European classical music."], ans:1 },
+        { chapter:3, q_th:"เครื่องดนตรีใดไม่อยู่ในกลุ่มเครื่องเป่าส่วนหน้า (Front line) ในวงดนตรีนิวออร์ลีนส์แจ๊สดั้งเดิม?", q_en:"Which instrument is NOT part of the front line in a traditional New Orleans jazz band?", options_th:["ก: คลาริเน็ต (Clarinet)", "ข: ทรอมโบน (Trombone)", "ค: ซูซาโฟน (Sousaphone)", "ง: คอร์เนต (Cornet)"], options_en:["A: Clarinet", "B: Trombone", "C: Sousaphone", "D: Cornet"], ans:2 },
+        { chapter:3, q_th:"เหตุการณ์ใดที่นักประวัติศาสตร์ดนตรีระบุว่าเป็นการเริ่มต้นบันทึกเสียงดนตรีแจ๊สอย่างเป็นทางการครั้งแรกในปี ค.ศ. 1917?", q_en:"Which event do music historians identify as the official first jazz recording in 1917?", options_th:["ก: การบันทึกเสียงเพลง 'Maple Leaf Rag' ของ Scott Joplin", "ข: การบันทึกเสียงของวง Original Dixieland Jass Band (ODJB)", "ค: การบันทึกเสียงอัลบั้มชุดแรกของ Louis Armstrong's Hot Five", "ง: การบันทึกเสียงเพลง 'Crazy Blues' ของ Mamie Smith"], options_en:["A: The recording of Scott Joplin's 'Maple Leaf Rag'.", "B: The recording by the Original Dixieland Jass Band (ODJB).", "C: The recording of Louis Armstrong's Hot Five's first album.", "D: The recording of Mamie Smith's 'Crazy Blues'."], ans:1 },
+        { chapter:3, q_th:"บทบาททางดนตรีที่สำคัญของ Louis Armstrong เมื่อครั้งตั้งวง Louis Armstrong’s Hot Five ณ เมืองชิคาโกคือข้อใด?", q_en:"What was Louis Armstrong's significant musical contribution when he formed Louis Armstrong's Hot Five in Chicago?", options_th:["ก: การเปลี่ยนผ่านดนตรีแจ๊สจากการบรรเลงสอดประสานร่วมกัน (Collective Improvisation) ไปสู่การเน้นโชว์ศักยภาพการโซโล่เดี่ยว (Individual Soloist)", "ข: การนำเครื่องดนตรีไฟฟ้าเข้ามาแทนที่เครื่องดนตรีอะคูสติกทั้งหมด", "ค: การยกเลิกบทบาทของกลองชุดและดับเบิลเบสออกจากวงแจ๊ส", "ง: การริเริ่มนำวงออร์เคสตราขนาดใหญ่มาบรรเลงเพลงแจ๊ส"], options_en:["A: Transitioning jazz from collective improvisation to emphasizing individual soloists.", "B: Replacing all acoustic instruments with electric ones.", "C: Eliminating the drum set and double bass from the jazz band.", "D: Pioneering the use of a large orchestra to play jazz music."], ans:0 },
+        { chapter:3, q_th:"ลักษณะเฉพาะของขบวนแห่ศพในแบบนิวออร์ลีนส์ (New Orleans’ Funeral March) ซึ่งเป็นต้นแบบการรวมวงแจ๊สคือข้อใด?", q_en:"What is a unique characteristic of the New Orleans' Funeral March, which served as a prototype for jazz ensembles?", options_th:["ก: ขาไปบรรเลงเพลงสนุกสนานเฉลิมฉลอง ขากลับบรรเลงเพลงเศร้าไว้อาลัย", "ข: ขาไปบรรเลงเพลงเศร้าเพื่อไว้อาลัย และขากลับบรรเลงเพลงสนุกสนานเพื่อเฉลิมฉลองชีวิต", "ค: มีการเดินสวนสนามโดยไม่มีการบรรเลงเครื่องดนตรีชนิดใดเลยตลอดเส้นทาง", "ง: ใช้การขับร้องประสานเสียงทางศาสนาโดยไม่มีวงเครื่องเป่าเดินตาม"], options_en:["A: Playing joyful celebration music on the way there, and sad mourning music on the way back.", "B: Playing sad mourning music on the way there, and joyful celebration music on the way back.", "C: Marching without playing any musical instruments along the route.", "D: Using religious choir singing without a horn section following."], ans:1 },
+        // บทที่ 4 (16-20)
+        { chapter:4, q_th:"ปัจจัยสำคัญใดที่ทำให้วงดนตรีแจ๊สขนาดเล็กต้องขยายขนาดสู่ 'วงบิ๊กแบนด์' (Big Band) ที่มีสมาชิก 12-13 คนในยุคสวิง?", q_en:"What was the main reason small jazz bands had to expand into 12-13 member 'Big Bands' during the swing era?", options_th:["ก: ความต้องการแข่งขันด้านจำนวนเครื่องดนตรีกับวงดนตรีคลาสสิกยุโรป", "ข: ระดับความดังของวงขนาดเล็กไม่เพียงพอต่อสถานที่เต้นรำ (Ballroom) ที่มีขนาดกว้างใหญ่", "ค: สหภาพนักดนตรีกำหนดกฎหมายบังคับให้ทุกวงต้องมีสมาชิกเกิน 10 คนขึ้นไป", "ง: กฎหมายห้ามจำหน่ายสุราทำให้ต้องรับสมาชิกวงเพิ่มเพื่อดึงดูดลูกค้า"], options_en:["A: The desire to compete with European classical orchestras in terms of instrument count.", "B: The volume level of small bands was insufficient for large ballrooms.", "C: A musicians' union law required all bands to have more than 10 members.", "D: Prohibition laws required more band members to attract customers."], ans:1 },
+        { chapter:4, q_th:"เทคนิคการเรียบเรียงเสียงประสานอันเป็นแบบอย่างของ Fletcher Henderson Orchestra จากการเรียบเรียงของ Don Redman คือข้อใด?", q_en:"Which signature arranging technique by Don Redman was prominent in the Fletcher Henderson Orchestra?", options_th:["ก: การให้นักดนตรีทุกคนด้นสดพร้อมกันตลอดทั้งบทเพลง", "ข: การโต้ตอบกัน (Call-and-respond) ระหว่างกลุ่มเครื่องลมไม้ (Reeds) และกลุ่มเครื่องทองเหลือง (Brass)", "ค: การใช้นักร้องนำสลับกับการอ่านบทกวีทางการเมือง", "ง: การใช้เครื่องสายแบบวงซิมโฟนีออร์เคสตราเป็นแกนหลักแทนเครื่องเป่า"], options_en:["A: Having all musicians improvise simultaneously throughout the song.", "B: Call-and-respond between the reeds and brass sections.", "C: Alternating a lead singer with readings of political poetry.", "D: Using a symphony orchestra string section as the core instead of horns."], ans:1 },
+        { chapter:4, q_th:"เทคนิคการเรียบเรียงเสียงประสานที่เรียกว่า 'Head Arrangement' ของวง Count Basie Orchestra มีความหมายว่าอย่างไร?", q_en:"What does the term 'Head Arrangement' mean in the style of the Count Basie Orchestra?", options_th:["ก: การที่หัวหน้าวงเขียนโน้ตเพลงทุกแนวอย่างละเอียดให้นักดนตรีเล่นตามตัวอักษร", "ข: การเล่นแนวทำนองแบบริฟฟ์ (Riff) ที่เกิดขึ้นจากการซ้อมและจดจำร่วมกันโดยไม่มีการบันทึกโน้ต", "ค: การแต่งเพลงโดยเน้นการใช้ศีรษะเคาะจังหวะแทนการใช้กลองชุด", "ง: การนำท่วงทำนองเพลงคลาสสิกโบราณมาใส่ทำนองใหม่โดยใช้คอร์ดเดิม"], options_en:["A: The bandleader writing detailed sheet music for musicians to play exactly as written.", "B: Playing riffs created through collective rehearsal and memorization without written music.", "C: Composing songs by using head nods to keep rhythm instead of a drum set.", "D: Applying ancient classical melodies to new rhythms using original chords."], ans:1 },
+        { chapter:4, q_th:"เหตุการณ์ประวัติศาสตร์ที่ทำให้ Benny Goodman ได้รับการขนานนามว่าเป็น 'King of Swing' คือเหตุการณ์ใด?", q_en:"Which historical event earned Benny Goodman the title 'King of Swing'?", options_th:["ก: การชนะการแข่งขันประชันวงในงาน Battle of the Bands ที่ Savoy Ballroom", "ข: การนำวงบิ๊กแบนด์ที่มีทั้งนักดนตรีผิวขาวและผิวดำเปิดการแสดงคอนเสิร์ตที่ Carnegie Hall ในปี ค.ศ. 1938", "ค: การริเริ่มใช้เทคนิค Scat Singing เป็นคนแรกของโลก", "ง: การเป็นผู้นำทัพทหารไปร่วมรบในสงครามโลกครั้งที่ 1 พร้อมวงดุริยางค์"], options_en:["A: Winning the Battle of the Bands competition at the Savoy Ballroom.", "B: Leading an integrated big band (black and white musicians) in a concert at Carnegie Hall in 1938.", "C: Pioneering the scat singing technique for the first time in the world.", "D: Leading a military band during World War I."], ans:1 },
+        { chapter:4, q_th:"ความโดดเด่นในการประพันธ์และเรียบเรียงเสียงประสานของ Duke Ellington คือข้อใด?", q_en:"What was the Duke Ellington Orchestra's standout feature in composition and arrangement?", options_th:["ก: การเขียนทำนองเพลงง่ายๆ โดยจำกัดให้ใช้เพียง 3 คอร์ดเท่านั้น", "ข: การอาศัยจุดเด่นและทักษะเฉพาะตัวของนักดนตรีแต่ละคนในวง เพื่อสร้างสีสันและการผสมเสียงคอร์ดที่แปลกใหม่", "ค: การห้ามไม่ให้นักดนตรีในวงเล่นการโซโล่เดี่ยวโดยเด็ดขาด", "ง: การกำหนดให้นักดนตรีทุกคนต้องใช้เครื่องดนตรีประเภทเดียวกันทั้งวง"], options_en:["A: Writing simple melodies restricted to only 3 chords.", "B: Utilizing the unique skills of individual band members to create novel chord voicings and colors.", "C: Strictly prohibiting solo improvisations by band members.", "D: Requiring all musicians to play the exact same type of instrument."], ans:1 },
+        // บทที่ 5 (21-25)
+        { chapter:5, q_th:"ปัจจัยทางเศรษฐกิจและสังคมข้อใดที่มีบทบาทสำคัญทำให้วัฒนธรรมการเต้นรำสวิงและวงบิ๊กแบนด์เสื่อมความนิยมลง?", q_en:"Which socio-economic factor played a major role in the decline of swing dance culture and big bands?", options_th:["ก: การบังคับใช้อัตราภาษี Cabaret Tax ที่สูงมาก จนสถานบันเทิงต้องสั่งห้ามเต้นรำ", "ข: การห้ามจำหน่ายแผ่นเสียงทั่วประเทศอย่างถาวร", "ค: การเกิดขึ้นของแนวดนตรีร็อคแอนด์โรลในทันทีหลังสงครามโลกครั้งที่ 1", "ง: การปิดตัวลงของถนนหมายเลข 52 ในนครนิวยอร์ก"], options_en:["A: The enforcement of a very high Cabaret Tax, which led venues to ban dancing.", "B: A permanent nationwide ban on record sales.", "C: The immediate emergence of rock 'n' roll after World War I.", "D: The shutdown of 52nd Street in New York City."], ans:0 },
+        { chapter:5, q_th:"ด้วยความเร็วของบทเพลงในยุคบีบ๊อพ มือกลองอย่าง Kenny Clarke และ Max Roach ได้ปรับเปลี่ยนรูปแบบการเล่นอย่างไร?", q_en:"Due to the fast tempos in bebop, how did drummers like Kenny Clarke and Max Roach change their playing style?", options_th:["ก: หยุดเล่นเครื่องเคาะจังหวะทุกชนิดและหันไปปรบมือแทน", "ข: ย้ายการรักษาจังหวะหลักจากกระเดื่อง (Bass drum) มาไว้ที่ฉาบไรด์ (Ride cymbal)", "ค: เล่นเฉพาะกลองสแนร์และกลองทอมด้วยจังหวะมาร์ชเท่านั้น", "ง: เปลี่ยนมาใช้ดรัมแมชชีนไฟฟ้าแทนการตีสด"], options_en:["A: Stopped playing percussion entirely and switched to hand clapping.", "B: Shifted the main beat from the bass drum to the ride cymbal.", "C: Exclusively played the snare and tom drums in a marching rhythm.", "D: Switched to an electric drum machine instead of playing live."], ans:1 },
+        { chapter:5, q_th:"เทคนิคการประพันธ์เพลงที่เรียกว่า 'Contrafact' ในยุคบีบ๊อพหมายถึงสิ่งใด?", q_en:"What does the 'Contrafact' composition technique in the bebop era refer to?", options_th:["ก: การนำบทเพลงคลาสสิกมาเร่งความเร็วเป็นสองเท่า", "ข: การแต่งทำนองใหม่ซ้อนทับลงบนโครงสร้างคอร์ดและฮาร์โมนีของเพลงเดิมที่มีอยู่แล้ว", "ค: การบรรเลงโดยไม่มีการกำหนดโครงสร้างคอร์ดและทำนองใดๆ เลย", "ง: การร้องบทกลอนภาษาต่างประเทศทับลงบนจังหวะกลองชุด"], options_en:["A: Doubling the tempo of classical music pieces.", "B: Composing a new melody over the existing chord structure and harmony of an older song.", "C: Performing without any defined chord structure or melody.", "D: Singing foreign language poetry over a drum beat."], ans:1 },
+        { chapter:5, q_th:"ลักษณะท่วงทำนอง (Melody) ของดนตรีบีบ๊อพมีความแตกต่างจากเพลงในยุคสวิงอย่างไร?", q_en:"How does the melody of bebop differ from swing era music?", options_th:["ก: ทำนองเรียบง่าย ช้า และราบยาวเป็นแนวนอน", "ข: ทำนองมีความเป็นมุมแหลม (Angular) อ้างอิงตามโน้ตในคอร์ด นิยมใช้โน้ตผ่านโครมาติก และประโยคเพลงไม่สมมาตร", "ค: เป็นทำนองวนซ้ำสั้นๆ เพียง 2 ตัวโน้ตตลอดทั้งเพลง", "ง: ไม่มีแนวทำนองหลัก แต่เน้นการตะโกนเนื้อร้องเพื่อระบายอารมณ์"], options_en:["A: Melodies were simple, slow, and flat horizontally.", "B: Melodies were angular, referencing specific chord notes, often using chromatic passing notes and asymmetrical phrasing.", "C: The melody consisted of a short, two-note loop repeated throughout the song.", "D: There was no main melody, focusing instead on shouting lyrics to vent emotions."], ans:1 },
+        { chapter:5, q_th:"Bud Powell ได้วางรากฐานสำคัญอันเป็นเอกลักษณ์ให้กับการเล่นเปียโนแจ๊สในยุคบีบ๊อพอย่างไร?", q_en:"What crucial foundation did Bud Powell establish for bebop piano playing?", options_th:["ก: การเล่นเปียโนมือเดียวโดยไม่แตะต้องคีย์ฝั่งเสียงต่ำ", "ข: การเล่นมือขวาที่รวดเร็วคล้ายเครื่องเป่า และมือซ้ายเล่นคอร์ดด้วยจังหวะที่คอยรองรับ (Comping)", "ค: การกดคอร์ดค้างไว้ตลอดทั้งเพลงโดยไม่มีการขยับนิ้ว", "ง: การใช้กำปั้นทุบแป้นคีย์บอร์ดเพื่อให้เกิดเสียงกระด้าง"], options_en:["A: Playing piano one-handed without touching the lower keys.", "B: Fast right-hand playing similar to a horn, while the left hand played supporting rhythmic chords (comping).", "C: Holding down a chord throughout the entire song without moving fingers.", "D: Pounding the keyboard with fists to create dissonant sounds."], ans:1 },
+        // บทที่ 6 (26-30)
+        { chapter:6, q_th:"ในอัลบั้ม 'The Birth of the Cool' ของ Miles Davis มีการนำเครื่องดนตรีชนิดใดเข้ามาเพิ่มเพื่อสร้างความนุ่มนวลและสีสันใหม่?", q_en:"In Miles Davis's album 'The Birth of the Cool,' which instruments were added to create a softer tone and new colors?", options_th:["ก: กีตาร์ไฟฟ้าและซินธิไซเซอร์", "ข: เฟรนช์ฮอร์น (French horn) และทูบา (Tuba)", "ค: ฮาร์ปและเครื่องสายไวโอลินแบบเต็มวง", "ง: แบนโจและหีบเพลงชัก"], options_en:["A: Electric guitar and synthesizer.", "B: French horn and Tuba.", "C: Harp and a full violin string section.", "D: Banjo and accordion."], ans:1 },
+        { chapter:6, q_th:"วง Gerry Mulligan Quartet ในอัลบั้ม Volume 1 มีรูปแบบวงพิเศษอย่างไรที่เรียกว่า 'Chordless Quartet'?", q_en:"What was the unique 'Chordless Quartet' format of the Gerry Mulligan Quartet in Volume 1?", options_th:["ก: เป็นวงที่ไม่มีเครื่องเป่า มีเพียงเครื่องประกอบจังหวะล้วน ๆ", "ข: เป็นวงที่ไม่มีเปียโนหรือเครื่องดำเนินคอร์ดใดๆ โดยอาศัยการบรรเลงสอดประสานกันแบบเคาน์เตอร์พอยต์ (Counterpoint)", "ค: เป็นวงที่บรรเลงเครื่องเป่า 4 ชิ้นพร้อมกันโดยไม่มีมือเบสและมือกลอง", "ง: เป็นวงที่ใช้ระบบเสียงสังเคราะห์แทนเครื่องดนตรีจริงทั้งหมด"], options_en:["A: A band with no horns, consisting purely of percussion instruments.", "B: A band without a piano or chording instrument, relying instead on interwoven counterpoint.", "C: A band playing 4 horns simultaneously without bass or drums.", "D: A band using entirely synthesized sound systems instead of real instruments."], ans:1 },
+        { chapter:6, q_th:"ความโดดเด่นด้านทฤษฎีจังหวะในอัลบั้ม 'Time Out' ของ Dave Brubeck Quartet คือข้อใด?", q_en:"What is the rhythmic distinction of the Dave Brubeck Quartet's 'Time Out' album?", options_th:["ก: การเล่นเพลงทั้งหมดด้วยอัตราจังหวะ 4/4 ที่มีความเร็วคงที่", "ข: การใช้อัตราส่วนจังหวะที่ไม่ใช่ 4/4 เช่น เพลง 'Take Five' ในจังหวะ 5/4 และ 'Blue Rondo à la Turk' ในจังหวะ 9/8", "ค: การเล่นเพลงโดยไม่กำหนดอัตราจังหวะตลอดทั้งอัลบั้ม", "ง: การจำกัดอัตราจังหวะให้เป็นจังหวะวอลซ์ 3/4 เท่านั้นในทุกบทเพลง"], options_en:["A: Playing all songs at a constant 4/4 time signature.", "B: Using time signatures other than 4/4, such as 5/4 in 'Take Five' and 9/8 in 'Blue Rondo à la Turk'.", "C: Playing songs without a set time signature throughout the album.", "D: Restricting the time signature strictly to a 3/4 waltz for all tracks."], ans:1 },
+        { chapter:6, q_th:"ผลงานการร่วมมือระหว่าง Miles Davis และ Gil Evans อัลบั้มใดที่นำกลิ่นอายดนตรีพื้นบ้านของประเทศสเปนมาผสมผสานกับการอิมโพรไวส์แจ๊ส?", q_en:"Which album collaboration between Miles Davis and Gil Evans blended Spanish folk music with jazz improvisation?", options_th:["ก: Miles Ahead", "ข: Porgy and Bess", "ค: Sketches of Spain", "ง: Quiet Nights"], options_en:["A: Miles Ahead", "B: Porgy and Bess", "C: Sketches of Spain", "D: Quiet Nights"], ans:2 },
+        { chapter:6, q_th:"ดนตรีแนว 'Third Stream' ที่นิยามโดย Gunther Schuller มีลักษณะสำคัญทางดนตรีอย่างไร?", q_en:"What is the main characteristic of the 'Third Stream' music coined by Gunther Schuller?", options_th:["ก: การผสมผสานดนตรีป๊อปเข้ากับดนตรีคันทรี่ของอเมริกัน", "ข: การนำเอาทฤษฎีและโครงสร้างของดนตรีคลาสสิก (กระแสที่ 1) มารวมเข้ากับดนตรีแจ๊ส (กระแสที่ 2)", "ค: การผสมระหว่างดนตรีแร๊กไทม์ ดนตรีบลูส์ และดนตรีร็อคเข้าด้วยกัน", "ง: การนำเครื่องดนตรีไฟฟ้า 3 ชิ้นมาบรรเลงประชันกัน"], options_en:["A: Blending pop music with American country music.", "B: Combining classical music theory and structure (first stream) with jazz (second stream).", "C: A mix of ragtime, blues, and rock music.", "D: Having three electric instruments compete in a solo battle."], ans:1 },
+        // บทที่ 7 (31-35)
+        { chapter:7, q_th:"แนวคิดหลักในการก่อกำเนิดแนวดนตรีฮาร์ดบ๊อบ (Hard Bop) เกิดขึ้นจากสิ่งใด?", q_en:"What was the primary concept behind the creation of Hard Bop?", options_th:["ก: ความต้องการเล่นดนตรีให้มีความนุ่มนวลและเย็นชามากกว่าคูลแจ๊ส", "ข: การทวงคืนอัตลักษณ์และจิตวิญญาณดนตรีของคนผิวดำ โดยนำโครงสร้างบีบ๊อพมาผสมกับบลูส์และกอสเปล (Gospel)", "ค: การละทิ้งระบบจังหวะสวิงแล้วหันไปเล่นจังหวะร็อคอย่างสมบูรณ์", "ง: การเลียนแบบทฤษฎีดนตรีคลาสสิกยุคโรแมนติกของชาวยุโรป"], options_en:["A: The desire to play softer and colder music than cool jazz.", "B: Reclaiming black musical identity and spirit by mixing bebop structures with blues and gospel.", "C: Abandoning swing rhythms to fully adopt rock rhythms.", "D: Imitating the music theory of the European Romantic period."], ans:1 },
+        { chapter:7, q_th:"ปัจจัยทางประวัติศาสตร์และสังคมข้อใดที่มีความเชื่อมโยงกับการเติบโตของดนตรีฮาร์ดบ๊อบอย่างลึกซึ้ง?", q_en:"Which historical and social factor was deeply connected to the growth of Hard Bop?", options_th:["ก: ขบวนการประท้วงเรียกร้องสิทธิพลเมือง (Civil Rights Movement) ของกลุ่มคนผิวดำ", "ข: วิกฤตการณ์เศรษฐกิจตกต่ำครั้งใหญ่ (The Great Depression) ในทศวรรษ 1930", "ค: ยุคตื่นทองในแถบชายฝั่งตะวันตกของสหรัฐอเมริกา", "ง: ยุคการล่าอาณานิคมของชาติตะวันตกในทวีปแอฟริกา"], options_en:["A: The Civil Rights Movement for black people.", "B: The Great Depression in the 1930s.", "C: The Gold Rush on the West Coast of the United States.", "D: Western colonization in Africa."], ans:0 },
+        { chapter:7, q_th:"วง Art Blakey and The Jazz Messengers ได้รับการยกย่องในวงการแจ๊สอย่างไร?", q_en:"How is Art Blakey and The Jazz Messengers praised in the jazz industry?", options_th:["ก: เป็นวงดนตรีวงแรกที่นำเบสไฟฟ้ามาใช้ในห้องอัด", "ข: เปรียบเสมือนสถาบันหรือโรงเรียนที่คอยบ่มเพาะและผลิตนักดนตรีแจ๊สชั้นยอดเข้าสู่วงการอย่างต่อเนื่อง", "ค: เป็นวงดนตรีที่ไม่เคยเปลี่ยนสมาชิกเลยตลอดระยะเวลา 40 ปี", "ง: เป็นวงดนตรีแจ๊สที่มีชื่อเสียงโด่งดังเฉพาะการเต้นประกอบเพลงเท่านั้น"], options_en:["A: The first band to use an electric bass in a recording studio.", "B: It acted as an institution or school that continuously nurtured and produced top-tier jazz musicians.", "C: A band that never changed its members for 40 years.", "D: A jazz band famous exclusively for dance choreography."], ans:1 },
+        { chapter:7, q_th:"Jimmy Smith เล่นเครื่องดนตรีอะไรในวงทรีโอของเขา?", q_en:"What instrument did Jimmy Smith play in his trio?", options_th:["ก: เครื่องแฮมมอนด์ บีทรี ออร์แกน (Hammond B-3 Organ)", "ข: เปียโนไฟฟ้า (Electric Piano)", "ค: ซินธิไซเซอร์ (Synthesizer)", "ง: เปียโนอะคูสติก (Acoustic Piano)"], options_en:["A: Hammond B-3 Organ", "B: Electric Piano", "C: Synthesizer", "D: Acoustic Piano"], ans:0 },
+        { chapter:7, q_th:"เมื่อเปรียบเทียบกับดนตรีบีบ๊อพแล้ว ดนตรีฮาร์ดบ๊อบมีลักษณะที่แตกต่างออกไปอย่างไร?", q_en:"Compared to Bebop, how did Hard Bop differ?", options_th:["ก: บรรเลงด้วยจังหวะที่เร็วขึ้นมากจนฟังไม่ออก", "ข: มักบรรเลงด้วยจังหวะที่ช้าลง ลดทอนความซับซ้อนของฮาร์โมนีลง และเน้นความสำคัญที่กรู๊ฟ (Groove)", "ค: ห้ามใช้องค์ประกอบของบลูส์โน้ตในเพลง", "ง: บรรเลงเฉพาะเครื่องดนตรีคลาสสิกโดยไม่มีเครื่องเป่าทองเหลือง"], options_en:["A: Played at much faster, almost incomprehensible tempos.", "B: Often played at slightly slower tempos, simplified harmonies, and emphasized the groove.", "C: Prohibited the use of blue notes in songs.", "D: Played exclusively with classical instruments without brass."], ans:1 },
+        // บทที่ 8 (36-40)
+        { chapter:8, q_th:"ทฤษฎีจากหนังสือ 'The Lydian Chromatic Concept of Tonal Organization' ของ George Russell นำไปสู่การพัฒนาดนตรีสไตล์ใด?", q_en:"George Russell's book 'The Lydian Chromatic Concept of Tonal Organization' led to the development of which music style?", options_th:["ก: ฟิวชั่น (Fusion)", "ข: โมดัลแจ๊ส (Modal Jazz)", "ค: ฟรีแจ๊ส (Free Jazz)", "ง: โพสต์บ็อป (Post-bop)"], options_en:["A: Fusion", "B: Modal Jazz", "C: Free Jazz", "D: Post-bop"], ans:1 },
+        { chapter:8, q_th:"ทฤษฎี 'Coltrane Changes' ของ John Coltrane ในเพลง 'Giant Steps' มีพื้นฐานแนวคิดทางทฤษฎีดนตรีอย่างไร?", q_en:"What is the theoretical foundation of John Coltrane's 'Coltrane Changes' in the song 'Giant Steps'?", options_th:["ก: การแบ่งเสียงในช่วงหนึ่งออกเตฟให้ออกมาเท่าๆ กันเป็น 3 คีย์", "ข: การใช้คอร์ดเดียวบรรเลงวนซ้ำตลอดทั้งเพลง 32 ห้อง", "ค: การละทิ้งคอร์ดทั้งหมดและด้นสดตามอารมณ์ผู้เล่น", "ง: การแปลงคอร์ดเมเจอร์ทั้งหมดให้กลายเป็นคอร์ดดิมินิชต์"], options_en:["A: Dividing an octave equally into three keys.", "B: Repeating a single chord loop for 32 bars.", "C: Abandoning all chords and improvising purely on emotion.", "D: Converting all major chords into diminished chords."], ans:0 },
+        { chapter:8, q_th:"ในบทเพลง 'Lonely Woman' ของ Ornette Coleman มีการทดลองทางดนตรีที่สะท้อนถึงอิสรภาพของฟรีแจ๊สอย่างไร?", q_en:"What Free Jazz experiment is demonstrated in Ornette Coleman's song 'Lonely Woman'?", options_th:["ก: นักดนตรีทุกคนหยุดเล่นแล้วร้องตะโกนพร้อมกัน", "ข: กลองและเบสเล่นบนจังหวะ Fast Swing แต่เครื่องเป่าบรรเลงทำนองบนจังหวะที่ช้ากว่าอย่างอิสระ", "ค: การสลับผู้เล่นเครื่องดนตรีในระหว่างทำการบันทึกเสียง", "ง: การบรรเลงโดยไม่มีการตั้งสายเครื่องดนตรีให้ตรงกัน"], options_en:["A: All musicians stopping simultaneously to shout together.", "B: The bass and drums playing a fast swing tempo, while the horns independently play a slower melody on top.", "C: Swapping instrumentalists in the middle of the recording.", "D: Performing with instruments intentionally out of tune with each other."], ans:1 },
+        { chapter:8, q_th:"นักเปียโน Cecil Taylor มีแนวคิดและสไตล์การบรรเลงเปียโนที่เป็นเอกลักษณ์ในยุคฟรีแจ๊สอย่างไร?", q_en:"What is Cecil Taylor's unique piano concept and playing style in the Free Jazz era?", options_th:["ก: พรมนิ้วอย่างนุ่มนวลเลียนแบบเสียงพิณโบราณ", "ข: ปฏิบัติต่อเปียโนเสมือนเป็นเครื่องกระทบ (Percussive) เล่นดนตรีแบบไร้คีย์ (Atonal) และใช้กลุ่มคอร์ดแบบคลัสเตอร์ (Cluster notes)", "ค: เล่นเฉพาะแนวคอร์ดคู่สามอย่างเคร่งครัดตามแบบฉบับเรเนซองส์", "ง: ใช้การเคาะเฉพาะขาเปียโนเป็นจังหวะโดยไม่กดคีย์เปียโน"], options_en:["A: Playing softly to imitate an ancient harp.", "B: Treating the piano as a percussive instrument, playing atonal music, and using complex cluster notes.", "C: Strictly playing triads according to Renaissance traditions.", "D: Only tapping the legs of the piano for rhythm without pressing keys."], ans:1 },
+        { chapter:8, q_th:"นักแซกโซโฟนชื่อดังคนใดที่เป็นเจ้าของผลงานอัลบั้ม 'A Love Supreme' ในปี ค.ศ. 1965?", q_en:"Which famous saxophonist released the album 'A Love Supreme' in 1965?", options_th:["ก: ชาร์ลี พาร์กเกอร์ (Charlie Parker)", "ข: ออร์เนต โคลแมน (Ornette Coleman)", "ค: จอห์น โคลเทรน (John Coltrane)", "ง: อัลเบิร์ต อายเลอร์ (Albert Ayler)"], options_en:["A: Charlie Parker", "B: Ornette Coleman", "C: John Coltrane", "D: Albert Ayler"], ans:2 },
+        // บทที่ 9 (41-45)
+        { chapter:9, q_th:"แนวดนตรี 'Post-Bop' ของวง Miles Davis’s The Second Great Quintet เกิดจากการหลอมรวมแนวคิดแบบใดเข้าหากัน?", q_en:"The 'Post-Bop' style developed by Miles Davis's Second Great Quintet merged which concepts?", options_th:["ก: อิสระจากแนวฟรีแจ๊ส ผสานกับความชัดเจนของฟอร์มเพลงจากฮาร์ดบ็อป และฮาร์โมนีที่ซับซ้อนลึกซึ้ง", "ข: จังหวะมาร์ชทหารผสมผสานกับเพลงเต้นรำดิสโก้", "ค: ดนตรีแร๊กไทม์ดั้งเดิมผสมกับดนตรีลูกทุ่งคันทรี", "ง: การบรรเลงแบบไม่มีจังหวะผสมกับการขับร้องหมู่แบบกอสเปล"], options_en:["A: The freedom of free jazz combined with the clear song forms of hard bop and much deeper harmonies.", "B: Military march rhythms mixed with disco dance music.", "C: Traditional ragtime mixed with country music.", "D: Out-of-time playing mixed with gospel choir singing."], ans:0 },
+        { chapter:9, q_th:"อัลบั้มระดับตำนานของ Miles Davis ในปี ค.ศ. 1970 ที่ถือเป็นหมุดหมายและต้นแบบสำคัญของการตกผลึกแนวดนตรีแจ๊สร็อคฟิวชั่น (Fusion) คืออัลบั้มใด?", q_en:"Which legendary 1970 album by Miles Davis served as a milestone and prototype for the crystallization of jazz-rock fusion?", options_th:["ก: Kind of Blue", "ข: The Birth of the Cool", "ค: Bitches Brew", "ง: Miles Ahead"], options_en:["A: Kind of Blue", "B: The Birth of the Cool", "C: Bitches Brew", "D: Miles Ahead"], ans:2 },
+        { chapter:9, q_th:"จุดเด่นในการนำเสนอเพลงของวง The Headhunters ภายใต้การนำของ Herbie Hancock คือข้อใด?", q_en:"What was the standout feature of The Headhunters led by Herbie Hancock?", options_th:["ก: การนำจังหวะฟังก์ (Funk) มาผสมผสานกับเปียโนไฟฟ้า ซินธิไซเซอร์ และการค่อยๆ เติมเครื่องดนตรีทีละชิ้นก่อนเข้าทำนอง", "ข: การบรรเลงเครื่องเป่าด้วยจังหวะสวิงเร็วสูงแบบบีบ๊อพดั้งเดิม", "ค: การใช้วงเครื่องสายออร์เคสตราบรรเลงคลอแนวอะคูสติกล้วน", "ง: การตัดเครื่องดนตรีไฟฟ้าออกทั้งหมดเพื่อเน้นเสียงธรรมชาติ"], options_en:["A: Blending funk grooves with electric pianos, synthesizers, and gradually layering instruments before playing the main melody.", "B: Horn sections playing fast traditional bebop swing tempos.", "C: Using purely acoustic string orchestras as accompaniment.", "D: Eliminating all electric instruments to emphasize natural sounds."], ans:0 },
+        { chapter:9, q_th:"วงดนตรี Return to Forever ของ Chick Corea โดดเด่นด้วยการนำดนตรีแนวใดมาผสมผสานกับแจ๊สไฟฟ้า?", q_en:"Chick Corea's band Return to Forever was distinguished by blending which musical rhythms with electric jazz?", options_th:["ก: ดนตรีพื้นบ้านของชาวอินเดีย (Indian folk music)", "ข: จังหวะลาติน (Latin rhythms)", "ค: เพลงสวดโบราณของยุโรป (Ancient European hymns)", "ง: ดนตรีคันทรี่ของอเมริกา (American country music)"], options_en:["A: Indian folk music", "B: Latin rhythms", "C: Ancient European hymns", "D: American country music"], ans:1 },
+        { chapter:9, q_th:"เอกลักษณ์ทางดนตรีของวง Mahavishnu Orchestra ที่ก่อตั้งโดยมือกีตาร์ John McLaughlin คือข้อใด?", q_en:"What was the musical signature of the Mahavishnu Orchestra founded by guitarist John McLaughlin?", options_th:["ก: การผสมผสานดนตรีร็อค บลูส์ จังหวะจากดนตรีอินเดีย และการใช้อัตราจังหวะที่แปลกใหม่หลากหลาย", "ข: การเล่นเพลงกล่อมนอนด้วยจังหวะช้าและนุ่มนวล", "ค: การบรรเลงบทเพลงป๊อปคัฟเวอร์เพื่อการค้าล้วนๆ", "ง: การจำกัดให้ใช้เพียงเครื่องดนตรีประเภทเป่าทองเหลืองเท่านั้น"], options_en:["A: An interesting blend of rock, blues, Indian rhythms, and diverse novel time signatures.", "B: Playing slow and soft lullaby rhythms.", "C: Playing purely commercial pop cover songs.", "D: Restricting the band exclusively to brass instruments."], ans:0 },
+        // บทที่ 10 (46-50)
+        { chapter:10, q_th:"อัลบั้ม 'Breezin'' (1976) ของ George Benson สร้างปรากฏการณ์สำคัญอย่างไรในประวัติศาสตร์ดนตรีแจ๊ส?", q_en:"What significant phenomenon did George Benson's album 'Breezin'' (1976) create in jazz history?", options_th:["ก: เป็นอัลบั้มฟรีแจ๊สชุดแรกที่ได้รับรางวัลเกียรติยศสูงสุด", "ข: เป็นอัลบั้มที่ประสบความสำเร็จทางยอดขายมหาศาลและติดอันดับเพลงในสาขาเพลงป๊อป ถือเป็นการข้ามสายดนตรี (Crossover) ที่ไม่เคยเกิดขึ้นมาก่อน", "ค: เป็นอัลบั้มที่ปฏิเสธการใช้อุปกรณ์ไฟฟ้าทุกชนิดในห้องอัดเสียง", "ง: เป็นอัลบั้มที่ทำให้เครื่องดนตรีแบนโจกลับมาเป็นที่นิยมสูงสุดอีกครั้ง"], options_en:["A: The first free jazz album to win a top honor award.", "B: A massive sales success that charted in the pop music category, marking an unprecedented crossover.", "C: An album that rejected the use of any electronic equipment in the studio.", "D: The album that brought the banjo back to peak popularity."], ans:1 },
+        { chapter:10, q_th:"นิยามของคำว่า 'Smooth Jazz' มีจุดเริ่มต้นมาจากเหตุผลใดในแวดวงอุตสาหกรรมดนตรี?", q_en:"What originated the term 'Smooth Jazz' in the music industry?", options_th:["ก: เกิดจากการบัญญัติโดยกลุ่มนักวิชาการในมหาวิทยาลัยดนตรี", "ข: เกิดจากการทำแบบสำรวจของสถานีวิทยุที่ต้องการเพลงบรรเลงฟังสบาย ไม่รบกวนสมาธิ สำหรับเปิดสร้างบรรยากาศ", "ค: เกิดจากการประท้วงของกลุ่มนักดนตรีบีบ๊อพดั้งเดิม", "ง: เกิดจากการคิดค้นระบบบันทึกเสียงดิจิทัลแบบใหม่"], options_en:["A: Coined by a group of academics at a music university.", "B: From radio station surveys looking for easy-listening, non-distracting instrumental music to create ambient atmosphere.", "C: A protest by traditional bebop musicians.", "D: The invention of a new digital recording system."], ans:1 },
+        { chapter:10, q_th:"จากหนังสือ 'Stomping The Blues' ของ Albert Murray ซึ่งส่งอิทธิพลต่อกลุ่ม 'Young Lions' ระบุว่าดนตรีแจ๊สที่แท้จริงต้องมีองค์ประกอบใดบ้าง?", q_en:"According to Albert Murray's book 'Stomping The Blues,' which influenced the 'Young Lions,' what elements must true jazz contain?", options_th:["ก: จังหวะร็อค เครื่องสังเคราะห์เสียง และการร้องเพลง", "ข: จังหวะสวิง บลูส์โน้ต และเครื่องดนตรีอะคูสติก", "ค: อัตราจังหวะแปลก ระบบไร้คีย์ และกีตาร์ไฟฟ้า", "ง: การด้นสดอย่างเสรี เสียงสังเคราะห์ และโครงสร้างบทเพลงสั้น"], options_en:["A: Rock rhythms, synthesizers, and vocals.", "B: Swing rhythm, blue notes, and acoustic instruments.", "C: Odd meters, atonal systems, and electric guitars.", "D: Free improvisation, synthesizers, and short song structures."], ans:1 },
+        { chapter:10, q_th:"นักดนตรีของกลุ่ม 'Young Lions' ผู้ร่วมก่อตั้งสถาบัน Jazz at Lincoln Center ในปี ค.ศ. 1987 คือใคร?", q_en:"Which musician and leader of the 'Young Lions' co-founded Jazz at Lincoln Center in 1987?", options_th:["ก: ไมลส์ เดวิส (Miles Davis)", "ข: วินตัน มาร์ซาลิส (Wynton Marsalis)", "ค: ดิซซี กิลเลสปี (Dizzy Gillespie)", "ง: เชต เบเกอร์ (Chet Baker)"], options_en:["A: Miles Davis", "B: Wynton Marsalis", "C: Dizzy Gillespie", "D: Chet Baker"], ans:1 },
+        { chapter:10, q_th:"กลุ่มนักดนตรี 'M-Base Collective' ในย่านบรู๊คลิน มีแนวคิดทางดนตรีที่สำคัญอย่างไร?", q_en:"What was the main musical concept of the 'M-Base Collective' in Brooklyn?", options_th:["ก: นำทฤษฎี Harmolodic มาผสานกับกรู๊ฟแบบฟังก์ การใช้ Polyrhythm ของแอฟริกัน และอัตราจังหวะแบบ Odd Meters", "ข: เน้นการเล่นเพลงป๊อปคัฟเวอร์เพื่อให้ติดอันดับชาร์ตวิทยุ", "ค: ปฏิเสธการเล่นสดและเน้นการแต่งเพลงผ่านคอมพิวเตอร์เท่านั้น", "ง: ยึดมั่นเฉพาะรูปแบบการจัดวงบิ๊กแบนด์แบบยุคสวิง 1930"], options_en:["A: Applying Harmolodic theory blended with funk grooves, African polyrhythms, and odd meters.", "B: Focusing strictly on pop covers to reach radio charts.", "C: Rejecting live performance and exclusively writing music via computer.", "D: Strictly adhering to 1930s swing era big band formats."], ans:0 }
+    ];
+
     function generateShuffledQuiz() {
         let finalArray = [];
         for (let i = 0; i < rawQuizData.length; i += 5) {
-            let chunk = rawQuizData.slice(i, i + 5); // ดึงมาทีละ 5 ข้อ (1 บท)
-            // สลับข้อภายใน Chunk
+            let chunk = rawQuizData.slice(i, i + 5);
             for (let j = chunk.length - 1; j > 0; j--) {
                 const k = Math.floor(Math.random() * (j + 1));
                 [chunk[j], chunk[k]] = [chunk[k], chunk[j]];
             }
-            finalArray = finalArray.concat(chunk); // นำมาต่อเข้าด้วยกัน
+            finalArray = finalArray.concat(chunk);
         }
         return finalArray;
     }
@@ -651,18 +227,18 @@
         const fname = document.getElementById('fname').value.trim();
         const lname = document.getElementById('lname').value.trim();
         const stdid = document.getElementById('studentid').value.trim();
+        const dict = i18n[currentLang];
 
         if(!fname || !lname || !stdid) {
-            alert("กรุณากรอกข้อมูลให้ครบถ้วนก่อนเริ่มทำข้อสอบ");
+            alert(dict.alertFill);
             return;
         }
 
         studentData = { fname, lname, stdid };
-        
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('quiz-page').classList.remove('hidden');
 
-        shuffledQuiz = generateShuffledQuiz();
+        if (shuffledQuiz.length === 0) shuffledQuiz = generateShuffledQuiz();
         renderQuiz();
     }
 
@@ -671,12 +247,18 @@
         let html = "";
         
         shuffledQuiz.forEach((qObj, index) => {
+            const questionText = currentLang === 'th' ? qObj.q_th : qObj.q_en;
+            const optionsArray = currentLang === 'th' ? qObj.options_th : qObj.options_en;
+            const previousSelection = document.querySelector(`input[name="q${index}"]:checked`);
+            const selectedVal = previousSelection ? previousSelection.value : null;
+
             html += `<div class="question-block" id="qblock-${index}">
-                        <div class="question-title">${index + 1}. ${qObj.q}</div>`;
+                        <div class="question-title">${index + 1}. ${questionText}</div>`;
             
-            qObj.options.forEach((opt, optIndex) => {
+            optionsArray.forEach((opt, optIndex) => {
+                const isChecked = (selectedVal == optIndex) ? "checked" : "";
                 html += `<label class="option-label">
-                            <input type="radio" name="q${index}" value="${optIndex}">
+                            <input type="radio" name="q${index}" value="${optIndex}" ${isChecked}>
                             ${opt}
                          </label>`;
             });
@@ -687,47 +269,48 @@
     }
 
     function submitQuiz() {
-        if(!confirm("คุณแน่ใจหรือไม่ว่าต้องการส่งคำตอบ?")) return;
+        const dict = i18n[currentLang];
+        if(!confirm(dict.confirmSubmit)) return;
 
         let score = 0;
         let mistakesHTML = "";
 
         shuffledQuiz.forEach((qObj, index) => {
             const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
-            
             if (selectedOption && parseInt(selectedOption.value) === qObj.ans) {
                 score++;
             } else {
-                // เก็บข้อมูลข้อที่ผิด
-                const userAnsText = selectedOption ? qObj.options[parseInt(selectedOption.value)] : "ไม่ได้ตอบ";
-                const correctAnsText = qObj.options[qObj.ans];
+                const questionText = currentLang === 'th' ? qObj.q_th : qObj.q_en;
+                const optionsArray = currentLang === 'th' ? qObj.options_th : qObj.options_en;
+                const userAnsText = selectedOption ? optionsArray[parseInt(selectedOption.value)] : dict.noAns;
+                const correctAnsText = optionsArray[qObj.ans];
                 
                 mistakesHTML += `
                     <div class="mistake-block">
-                        <p><strong>คำถาม:</strong> ${qObj.q}</p>
-                        <p style="color: #d32f2f;"><strong>คำตอบของคุณ:</strong> ${userAnsText}</p>
-                        <p class="correct-ans">✔ <strong>คำตอบที่ถูกต้อง:</strong> ${correctAnsText}</p>
+                        <p><strong>Q:</strong> ${questionText}</p>
+                        <p style="color: #c0392b;"><strong>${dict.yourAns}:</strong> ${userAnsText}</p>
+                        <p class="correct-ans">✔ <strong>${dict.correctAns}:</strong> ${correctAnsText}</p>
                     </div>`;
             }
         });
 
-        // ซ่อนหน้าข้อสอบ โชว์หน้าผลลัพธ์
         document.getElementById('quiz-page').classList.add('hidden');
+        document.querySelector('.lang-switch').classList.add('hidden');
         document.getElementById('result-page').classList.remove('hidden');
 
-        // แสดงข้อมูล
-        document.getElementById('student-info').innerText = `ชื่อ: ${studentData.fname} ${studentData.lname} | รหัสนักศึกษา: ${studentData.stdid}`;
-        document.getElementById('final-score').innerText = `คะแนนที่ได้: ${score} / ${shuffledQuiz.length} คะแนน`;
+        document.getElementById('student-info').innerText = `${dict.fnameLabel.replace(':','')} ${studentData.fname} ${studentData.lname} | ${dict.stdidLabel.replace(':','')} ${studentData.stdid}`;
+        document.getElementById('final-score').innerText = `${dict.scoreText}: ${score} / ${shuffledQuiz.length}`;
         
-        const mistakesContainer = document.getElementById('mistakes-container');
+        const mistakesList = document.getElementById('mistakes-list');
         if (score === shuffledQuiz.length) {
-            mistakesContainer.innerHTML = `<h3 style="color: #2e7d32; text-align: center;">🎉 ยอดเยี่ยมมาก! คุณทำข้อสอบถูกต้องทั้งหมด</h3>`;
+            mistakesList.innerHTML = `<h3 style="color: #2e7d32; text-align: center;">${dict.perfectMsg}</h3>`;
         } else {
-            mistakesContainer.innerHTML += mistakesHTML;
+            mistakesList.innerHTML = mistakesHTML;
         }
-        
-        window.scrollTo(0, 0); // เลื่อนหน้าจอกลับไปด้านบนสุด
+        window.scrollTo(0, 0); 
     }
+
+    setLanguage('th');
 </script>
 
 </body>
