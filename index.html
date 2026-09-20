@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส</title>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h1, h2, h3 { text-align: center; color: #2c3e50; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #3498db; color: #fff; border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 20px; }
+        button:hover { background: #2980b9; }
+        .question-block { margin-bottom: 25px; padding: 15px; border-bottom: 1px solid #eee; }
+        .question-title { font-weight: bold; margin-bottom: 10px; }
+        .option-label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; background: #f9f9f9; border-radius: 4px; }
+        .option-label:hover { background: #e9ecef; }
+        .hidden { display: none; }
+        .mistake-block { background: #ffebee; border-left: 4px solid #f44336; padding: 15px; margin-bottom: 15px; }
+        .correct-ans { color: #2e7d32; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- หน้าแรก: กรอกข้อมูล -->
+    <div id="login-page">
+        <h1>ลงทะเบียนสอบ</h1>
+        <p style="text-align:center;">แบบทดสอบประวัติศาสตร์ดนตรีแจ๊ส (50 ข้อ)</p>
+        <div class="form-group">
+            <label>ชื่อ:</label>
+            <input type="text" id="fname" placeholder="กรอกชื่อ" required>
+        </div>
+        <div class="form-group">
+            <label>นามสกุล:</label>
+            <input type="text" id="lname" placeholder="กรอกนามสกุล" required>
+        </div>
+        <div class="form-group">
+            <label>รหัสนักศึกษา:</label>
+            <input type="text" id="studentid" placeholder="กรอกรหัสนักศึกษา" required>
+        </div>
+        <button onclick="startQuiz()">เริ่มทำข้อสอบ</button>
+    </div>
+
+    <!-- หน้าทำข้อสอบ -->
+    <div id="quiz-page" class="hidden">
+        <h2>แบบทดสอบ</h2>
+        <div id="quiz-container"></div>
+        <button onclick="submitQuiz()">ส่งคำตอบ</button>
+    </div>
+
+    <!-- หน้าแสดงผลลัพธ์ -->
+    <div id="result-page" class="hidden">
+        <h1>ผลการทดสอบ</h1>
+        <h3 id="student-info"></h3>
+        <h2 id="final-score" style="color: #d35400; font-size: 32px;"></h2>
+        
+        <div id="mistakes-container">
+            <h3 style="text-align: left; margin-top: 30px;">ข้อที่ทำผิดและการเรียนรู้:</h3>
+            <!-- ข้อที่ผิดจะแสดงที่นี่ -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // ฐานข้อมูลข้อสอบ (สามารถคัดลอกข้อ 11-50 มาใส่ต่อในรูปแบบเดียวกันได้เลย)
+    const rawQuizData = [
+        { chapter: 1, q: "ดนตรีแร๊กไทม์ (Ragtime) เกิดจากการผสมผสานของสองวัฒนธรรมใดเป็นหลัก?", options: ["ก. เอเชียและยุโรป", "ข. การใช้จังหวะขัดแอฟริกันผสมผสานกับทฤษฎีดนตรียุโรป", "ค. ลาตินและยุโรป", "ง. พื้นเมืองอเมริกันและอังกฤษ"], ans: 1 },
+        { chapter: 1, q: "บทเพลง Maple Leaf Rag ของ Scott Joplin มีความสำคัญอย่างไร?", options: ["ก. ใช้เครื่องสังเคราะห์เสียง", "ข. เป็นเพลงแรกที่ทำให้ดนตรีแร๊กไทม์โด่งดังไปทั่วประเทศ", "ค. ข้ามไปยุคบีบ๊อพโดยตรง", "ง. บันทึกเสียงลงแผ่นเสียงเป็นครั้งแรก"], ans: 1 },
+        { chapter: 1, q: "รัฐใดได้รับการยอมรับว่าเป็น ศูนย์กลางของดนตรีแร๊กไทม์?", options: ["ก. นิวยอร์ก", "ข. ลุยเซียนา", "ค. มิสซูรี", "ง. อิลลินอยส์"], ans: 2 },
+        { chapter: 1, q: "เครื่องดนตรีชนิดใดได้รับความนิยมในการบรรเลงดนตรีแร๊กไทม์ในช่วงเริ่มต้น?", options: ["ก. แบนโจ (Banjo)", "ข. กีตาร์", "ค. ไวโอลิน", "ง. ดับเบิลเบส"], ans: 0 },
+        { chapter: 1, q: "Jelly Roll Morton มีบทบาทสำคัญในการพัฒนาจังหวะแร๊กไทม์อย่างไรในปี ค.ศ. 1938?", options: ["ก. เล่นเป็นวอลซ์", "ข. การเล่นโน้ตตัวเขบ็ตหนึ่งชั้นจังหวะยกให้มีความโยน", "ค. ใช้เครื่องเป่าทองเหลือง", "ง. เล่นจังหวะฟรีเทมโป"], ans: 1 },
+        { chapter: 2, q: "โครงสร้างพื้นฐานของดนตรีบลูส์ที่พบเห็นได้อย่างชัดเจนคือรูปแบบใด?", options: ["ก. 16 ห้อง AABA", "ข. โครงสร้าง 12 ห้อง ในรูปแบบของฟอร์ม AAB", "ค. 8 ห้อง ABAB", "ง. 32 ห้อง"], ans: 1 },
+        { chapter: 2, q: "โน้ตใดในบันไดเสียงเมเจอร์ที่มีระดับเสียงเพี้ยนต่ำลงจนเรียกว่า Blue Note?", options: ["ก. 1, 3 และ 5", "ข. 2, 4 และ 6", "ค. โน้ตตัวที่ 3, 5 และ 7", "ง. 4, 6 และ 7"], ans: 2 },
+        { chapter: 2, q: "ลักษณะเด่นที่สุดของ Classic Blues ในช่วงทศวรรษที่ 1920 คืออะไร?", options: ["ก. ร้องเดี่ยวในทุ่งนา", "ข. การบรรเลงเป็นวงและมีนักร้องนำเป็นผู้หญิง", "ค. ใช้เฉพาะกีตาร์", "ง. ขับร้องโดยผู้ชายล้วนในโบสถ์"], ans: 1 },
+        { chapter: 2, q: "จุดเปลี่ยนสำคัญของ Urban Blues ในเมืองชิคาโกคือข้อใด?", options: ["ก. กลับไปใช้เครื่องอะคูสติก", "ข. การใช้เครื่องดนตรีไฟฟ้าแทนเครื่องดนตรีอะคูสติก", "ค. ใช้คอมพิวเตอร์", "ง. ยกเลิกกลองชุด"], ans: 1 },
+        { chapter: 2, q: "เทคนิค Call and Respond ในบลูส์ส่งอิทธิพลต่อแจ๊สอย่างไร?", options: ["ก. เล่น Counterpoint", "ข. พัฒนาไปเป็นการผลัดกันโซโล่ระหว่างนักดนตรี", "ค. เล่น Walking Bass", "ง. เปลี่ยนอัตราจังหวะอิสระ"], ans: 1 }
+        // ... เติมข้อ 11 - 50 ลงตรงนี้ ...
+    ];
+
+    let shuffledQuiz = [];
+    let studentData = {};
+
+    // ฟังก์ชันสุ่มชุดข้อสอบทีละ 5 ข้อ (Chunk Shuffling)
+    function generateShuffledQuiz() {
+        let finalArray = [];
+        for (let i = 0; i < rawQuizData.length; i += 5) {
+            let chunk = rawQuizData.slice(i, i + 5); // ดึงมาทีละ 5 ข้อ (1 บท)
+            // สลับข้อภายใน Chunk
+            for (let j = chunk.length - 1; j > 0; j--) {
+                const k = Math.floor(Math.random() * (j + 1));
+                [chunk[j], chunk[k]] = [chunk[k], chunk[j]];
+            }
+            finalArray = finalArray.concat(chunk); // นำมาต่อเข้าด้วยกัน
+        }
+        return finalArray;
+    }
+
+    function startQuiz() {
+        const fname = document.getElementById('fname').value.trim();
+        const lname = document.getElementById('lname').value.trim();
+        const stdid = document.getElementById('studentid').value.trim();
+
+        if(!fname || !lname || !stdid) {
+            alert("กรุณากรอกข้อมูลให้ครบถ้วนก่อนเริ่มทำข้อสอบ");
+            return;
+        }
+
+        studentData = { fname, lname, stdid };
+        
+        document.getElementById('login-page').classList.add('hidden');
+        document.getElementById('quiz-page').classList.remove('hidden');
+
+        shuffledQuiz = generateShuffledQuiz();
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        const container = document.getElementById('quiz-container');
+        let html = "";
+        
+        shuffledQuiz.forEach((qObj, index) => {
+            html += `<div class="question-block" id="qblock-${index}">
+                        <div class="question-title">${index + 1}. ${qObj.q}</div>`;
+            
+            qObj.options.forEach((opt, optIndex) => {
+                html += `<label class="option-label">
+                            <input type="radio" name="q${index}" value="${optIndex}">
+                            ${opt}
+                         </label>`;
+            });
+            html += `</div>`;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    function submitQuiz() {
+        if(!confirm("คุณแน่ใจหรือไม่ว่าต้องการส่งคำตอบ?")) return;
+
+        let score = 0;
+        let mistakesHTML = "";
+
+        shuffledQuiz.forEach((qObj, index) => {
+            const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+            
+            if (selectedOption && parseInt(selectedOption.value) === qObj.ans) {
+                score++;
+            } else {
+                // เก็บข้อมูลข้อที่ผิด
+                const userAnsText = selectedOption ? qObj.options[parseInt(selectedOption.value)] : "ไม่ได้ตอบ";
+                const correctAnsText = qObj.options[qObj.ans];
+                
+                mistakesHTML += `
+                    <div class="mistake-block">
+                        <p><strong>คำถาม:</strong> ${qObj.q}</p>
+                        <p style="color: #d32f2f;"><strong>คำตอบของคุณ:</strong> ${userAnsText}</p>
+                        <p class="correct-ans">✔ <strong>คำตอบที่ถูกต้อง:</strong> ${correctAnsText}</p>
+                    </div>`;
+            }
+        });
+
+        // ซ่อนหน้าข้อสอบ โชว์หน้าผลลัพธ์
+        document.getElementById('quiz-page').classList.add('hidden');
+        document.getElementById('result-page').classList.remove('hidden');
+
+        // แสดงข้อมูล
+        document.getElementById('student-info').innerText = `ชื่อ: ${studentData.fname} ${studentData.lname} | รหัสนักศึกษา: ${studentData.stdid}`;
+        document.getElementById('final-score').innerText = `คะแนนที่ได้: ${score} / ${shuffledQuiz.length} คะแนน`;
+        
+        const mistakesContainer = document.getElementById('mistakes-container');
+        if (score === shuffledQuiz.length) {
+            mistakesContainer.innerHTML = `<h3 style="color: #2e7d32; text-align: center;">🎉 ยอดเยี่ยมมาก! คุณทำข้อสอบถูกต้องทั้งหมด</h3>`;
+        } else {
+            mistakesContainer.innerHTML += mistakesHTML;
+        }
+        
+        window.scrollTo(0, 0); // เลื่อนหน้าจอกลับไปด้านบนสุด
+    }
+</script>
+
+</body>
+</html>
