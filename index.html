@@ -21,7 +21,7 @@
         .container { 
             max-width: 850px; 
             margin: 0 auto; 
-            background: rgba(255, 255, 255, 0.7); 
+            background: rgba(255, 255, 255, 0.6); 
             backdrop-filter: blur(8px);
             padding: 30px; 
             border-radius: 12px; 
@@ -234,6 +234,17 @@
             return;
         }
 
+        // --- เพิ่มระบบป้องกันการทำซ้ำตรงนี้ ---
+        // ตรวจสอบใน Local Storage ว่ารหัสนักศึกษานี้เคยส่งข้อสอบหรือยัง
+        if (localStorage.getItem('jazz_quiz_completed_' + stdid)) {
+            const msg = currentLang === 'th' 
+                ? `รหัสนักศึกษา ${stdid} ได้ส่งคำตอบไปแล้ว ไม่สามารถทำซ้ำได้ครับ` 
+                : `Student ID ${stdid} has already submitted the quiz.`;
+            alert(msg);
+            return;
+        }
+        // ------------------------------------
+
         studentData = { fname, lname, stdid };
         document.getElementById('login-page').classList.add('hidden');
         document.getElementById('quiz-page').classList.remove('hidden');
@@ -292,6 +303,27 @@
                         <p class="correct-ans">✔ <strong>${dict.correctAns}:</strong> ${correctAnsText}</p>
                     </div>`;
             }
+        });
+
+        // --- เพิ่มระบบบันทึกการทำข้อสอบลง Local Storage ---
+        localStorage.setItem('jazz_quiz_completed_' + studentData.stdid, 'true');
+        // -----------------------------------------------
+
+        document.getElementById('quiz-page').classList.add('hidden');
+        document.querySelector('.lang-switch').classList.add('hidden');
+        document.getElementById('result-page').classList.remove('hidden');
+
+        document.getElementById('student-info').innerText = `${dict.fnameLabel.replace(':','')} ${studentData.fname} ${studentData.lname} | ${dict.stdidLabel.replace(':','')} ${studentData.stdid}`;
+        document.getElementById('final-score').innerText = `${dict.scoreText}: ${score} / ${shuffledQuiz.length}`;
+        
+        const mistakesList = document.getElementById('mistakes-list');
+        if (score === shuffledQuiz.length) {
+            mistakesList.innerHTML = `<h3 style="color: #2e7d32; text-align: center;">${dict.perfectMsg}</h3>`;
+        } else {
+            mistakesList.innerHTML = mistakesHTML;
+        }
+        window.scrollTo(0, 0); 
+    }
         });
 
         document.getElementById('quiz-page').classList.add('hidden');
